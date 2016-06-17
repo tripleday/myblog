@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  
+  
+    
+    <entry>
+      <title><![CDATA[CentOS 6.5 下scrapy与ghost.py的安装干货]]></title>
+      <url>http://tripleday.github.io/2016/06/16/centos&scrapy&ghost.py/</url>
+      <content type="html"><![CDATA[<p><a href="http://tripleday.github.io/pdf//CentOS%26scrapy%26ghost.py.pdf">安装干货</a></p>
+<h1 id="PDF-Test"><a href="#PDF-Test" class="headerlink" title="PDF Test:"></a>PDF Test:</h1>
+
+	<div class="row">
+	  <iframe src="http://nagland.github.io/viewer/web/viewer.html?val=http://tripleday.github.io/pdf//CentOS%26scrapy%26ghost.py.pdf" style="width:100%; height:900px"></iframe>
+	</div>
+
+
+
+]]></content>
+    </entry>
+    
+    <entry>
+      <title><![CDATA[Hello World]]></title>
+      <url>http://tripleday.github.io/2016/06/12/hello-world/</url>
+      <content type="html"><![CDATA[<p>This is my <strong>first blog</strong> after I established this site using <a href="https://hexo.io/" target="_blank" rel="external">Hexo</a> and <a href="https://github.com/stiekel/hexo-theme-random" target="_blank" rel="external">random</a>.<br>Here are some tests for Hexo:</p>
+<h1 id="Code-Test"><a href="#Code-Test" class="headerlink" title="Code Test:"></a>Code Test:</h1><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ hexo clean</span><br><span class="line">$ hexo generate</span><br><span class="line">$ hexo server</span><br><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+<h1 id="PDF-Test"><a href="#PDF-Test" class="headerlink" title="PDF Test:"></a>PDF Test:</h1>
+
+	<div class="row">
+	  <iframe src="http://nagland.github.io/viewer/web/viewer.html?val=http://tripleday.github.io/pdf/Clean%20Code.pdf" style="width:100%; height:900px"></iframe>
+	</div>
+
+
+
+<h1 id="iFrame-Test"><a href="#iFrame-Test" class="headerlink" title="iFrame Test:"></a>iFrame Test:</h1><iframe src="http://www.seu.edu.cn/english/main.htm" width="100%" height="500" frameborder="0" allowfullscreen></iframe>
+<h1 id="Picture-Test"><a href="#Picture-Test" class="headerlink" title="Picture Test:"></a>Picture Test:</h1><p><img src="http://i.imgur.com/woaa6Rc.jpg" alt=""></p>
+<h1 id="Youtube-Test"><a href="#Youtube-Test" class="headerlink" title="Youtube Test:"></a>Youtube Test:</h1><div class="video-container"><iframe src="//www.youtube.com/embed/https://youtu.be/QBJxGklvHRg" frameborder="0" allowfullscreen></iframe></div>
+<h1 id="Youku-Test"><a href="#Youku-Test" class="headerlink" title="Youku Test:"></a>Youku Test:</h1><div class="video-container"><iframe height="480" width="100%" src="http://player.youku.com/embed/XMTU3NjExOTUwMA==" frameborder="0" allowfullscreen></iframe></div>
+]]></content>
+    </entry>
+    
+  
+  
+    
+    <entry>
+      <title><![CDATA[About]]></title>
+      <url>http://tripleday.github.io/about/index.html</url>
+      <content type="html"><![CDATA[<h1 id="About-Me"><a href="#About-Me" class="headerlink" title="About Me"></a>About Me</h1><p>My name is Haotian Wu(吴昊天). I’m a master student in <a href="http://cse.seu.edu.cn/en/index.html" target="_blank" rel="external">School of Computer Science &amp; Engineering</a> at <a href="http://www.seu.edu.cn/english/main.htm" target="_blank" rel="external">Southeast University</a> and will graduate in Summer 2018.</p>
+<ul>
+<li>Research Interests:<ul>
+<li>Web Crawler</li>
+<li>Data Mining &amp; Visualization</li>
+<li>Ad Hoc Networks</li>
+</ul>
+</li>
+<li>Sports: <ul>
+<li>Badminton</li>
+<li>Swimming</li>
+</ul>
+</li>
+</ul>
+<h1 id="Contact"><a href="#Contact" class="headerlink" title="Contact"></a>Contact</h1><p>Just to avoid spams, here is the Base64 code of my e-mail address:<br><code>aGFvdGlhbnd1c2V1QGdtYWlsLmNvbQ==</code></p>
+]]></content>
+    </entry>
+    
+    <entry>
+      <title><![CDATA[categories]]></title>
+      <url>http://tripleday.github.io/categories/index.html</url>
+      <content type="html"></content>
+    </entry>
+    
+    <entry>
+      <title><![CDATA[tags]]></title>
+      <url>http://tripleday.github.io/tags/index.html</url>
+      <content type="html"></content>
+    </entry>
+    
+  
+</search>
