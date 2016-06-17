@@ -3,12 +3,7 @@ date: 2016-06-12 21:28:52
 comments: true
 tags: 
  - Hexo
-categories: 
- - English
- - Picture
- - Video
- - PDF
- - iFrame
+categories: Site Est
 photos: 
  - http://i.imgur.com/v74BWOG.jpg
 ---
