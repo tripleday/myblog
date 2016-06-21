@@ -2,6 +2,7 @@ title: Hello World
 date: 2016-06-12 21:28:52
 comments: true
 tags: 
+ - English
  - Hexo
 categories: Site Est
 photos: 
