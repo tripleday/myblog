@@ -16,7 +16,10 @@
   
   
   
-    <meta name="description" content="之前一直在做Scrapy中关于网页动态内容的获取，主要目标是想获得javascript渲染后的网页html源码。在转向使用ghost.py来做脚本解析之前的挖坑爬坑过程中，我已经造访过我所知的大大小小各种论坛、博客以及贴吧和知乎。其中有大方向上指导意义的有知乎里的相关问题：Python 爬虫如何获取 JS 生成的 URL 和网页内容？Python爬虫在处理由Javascript动态生成的页面...">
+    <meta name="description" content="之前一直在做Scrapy中关于网页动态内容的获取，主要目标是想获得javascript渲染后的网页html源码。在转向使用ghost.py来做脚本解析之前的挖坑爬坑过程中，我已经造访过我所知的大大小小各种论坛、博客以及贴吧和知乎。其中有大方向上指导意义的有知乎里的相关问题：
+
+Python 爬虫如何获取 JS 生成的 URL 和网页内容？
+Python爬虫在处理由Javascript动态生成...">
   
   <title>CentOS 6.5 下scrapy与ghost.py的安装干货 [ tripleday ]</title>
   
@@ -48,7 +51,8 @@
     </div>
   
 </div>
-<div id="container" class="hide-area">
+<div id="outer-container" class="hide-area">
+<div id="container">
   <div id="menu-outer" class="slide-down">
     <div id="menu-inner">
       <div id="brand">
@@ -87,12 +91,12 @@
   <article id="post">
     <h1>CentOS 6.5 下scrapy与ghost.py的安装干货</h1>
     <p class="page-title-sub">
-      <span id = "post-title-date">撰写于 2016-06-16</span>
+      <span id = "post-title-date">Created at 2016-06-16</span>
       
-        <span id = "post-title-updated">修改于 2016-06-21</span>
+        <span id = "post-title-updated">Updated at 2016-06-22</span>
       
       
-      <span id = "post-title-categories">分类
+      <span id = "post-title-categories">Category
       
       
         
@@ -103,7 +107,7 @@
       
       
       <span id = "post-title-tags">
-      标签
+      Tag
       
       
         
@@ -132,23 +136,37 @@
       
     </p>
     
-    <p>之前一直在做Scrapy中关于网页动态内容的获取，主要目标是想获得javascript渲染后的网页html源码。<br>在转向使用ghost.py来做脚本解析之前的挖坑爬坑过程中，我已经造访过我所知的大大小小各种论坛、博客以及贴吧和知乎。其中有大方向上指导意义的有知乎里的相关问题：<br><a href="https://www.zhihu.com/question/21471960" target="_blank" rel="external">Python 爬虫如何获取 JS 生成的 URL 和网页内容？</a><br><a href="https://www.zhihu.com/question/36450326" target="_blank" rel="external">Python爬虫在处理由Javascript动态生成的页面时有哪些解决方案？</a><br>一些前人的技术博客如开源中国里<a href="http://my.oschina.net/u/1024140?ft=blog" target="_blank" rel="external">斑ban</a>的<a href="http://my.oschina.net/u/1024140/blog/188154" target="_blank" rel="external">使用python，scrapy写（定制）爬虫的经验，资料，杂</a>。这篇博客里的总结让人受益匪浅，作者乃真大神，有很丰富的爬虫经验。<br>上述几个干货里提到的方法，我基本都去了解了一下，也照着其中的几个方向挖过坑，过些时间我把我在这方面爬的所有坑都总结到一篇博客里。<br>ghost.py算是我掉坑里时间最长的，也是曾给了我巨大希望的一个，虽然现在也弃了，弃的原因日后再说。其实，用ghost.py是在PyQt4的基础上转过去的，ghost.py是对PyQt4或者PySide的一个封装，需要安装其中一个才能运行。<br>当然挖坑的第一步就是装环境了，win7上安装简便得多，但到linux下就没那么舒服了。<br>下面是我在CentOS 6.5上安装Scrapy、PySide和Ghost.py过程种查到的有用资料的整合，如嫌下面的字太小，可戳此PDF<a href="http://tripleday.github.io/pdf//CentOS%26scrapy%26ghost.py.pdf">源地址</a></p>
-<h1 id="PDF-Test"><a href="#PDF-Test" class="headerlink" title="PDF Test:"></a>PDF Test:</h1>
+    <p>之前一直在做Scrapy中关于网页动态内容的获取，主要目标是想获得javascript渲染后的网页html源码。<br>在转向使用ghost.py来做脚本解析之前的挖坑爬坑过程中，我已经造访过我所知的大大小小各种论坛、博客以及贴吧和知乎。其中有大方向上指导意义的有知乎里的相关问题：</p>
+<ul>
+<li><a href="https://www.zhihu.com/question/21471960" target="_blank" rel="external">Python 爬虫如何获取 JS 生成的 URL 和网页内容？</a></li>
+<li><a href="https://www.zhihu.com/question/36450326" target="_blank" rel="external">Python爬虫在处理由Javascript动态生成的页面时有哪些解决方案？</a></li>
+</ul>
+<p>一些前人的技术博客如：</p>
+<ul>
+<li>开源中国上<a href="http://my.oschina.net/u/1024140?ft=blog" target="_blank" rel="external">斑ban</a>的<a href="http://my.oschina.net/u/1024140/blog/188154" target="_blank" rel="external">《使用python，scrapy写（定制）爬虫的经验，资料，杂》</a>。<br>这篇博客里的总结涉及到爬虫的很多方面，看后受益匪浅，作者乃真大神，有很丰富的爬虫经验。</li>
+</ul>
+<p>上述几个干货里提到的方法，我基本都去了解了一下，也照着其中的几个方向挖过坑，过些时间我把我在这方面爬的所有坑都总结到一篇博客里。<br>ghost.py算是我掉坑里时间最长的，也是差点就成功的一个，到现在也弃了，弃的原因日后再说。其实，用ghost.py是在PyQt4的基础上转过去的，ghost.py是对<strong>PyQt4</strong>或者<strong>PySide</strong>的一个封装，需要安装其中一个才能运行。</p>
+<h1 id="PySide"><a href="#PySide" class="headerlink" title="PySide"></a>PySide</h1><p>当然挖坑的第一步就是安装环境了，win7上安装简便得多，但到linux下就没那么舒服了。<br>下面是我在CentOS 6.5和python2.7.11的环境上安装Scrapy、PySide和Ghost.py过程中查到的有用资料的整合。如嫌下面的字太小，可戳此PDF<a href="http://tripleday.github.io/pdf//CentOS%26scrapy%26ghost.py.pdf">源地址</a>。<br>
 
 	<div class="row">
 	  <iframe src="http://nagland.github.io/viewer/web/viewer.html?val=http://tripleday.github.io/pdf//CentOS%26scrapy%26ghost.py.pdf" style="width:100%; height:900px"></iframe>
 	</div>
 
 
-
+<br>上面的PDF里ghost.py用的是PySide。PySide和PyQt4的功能和API近乎一致，我的理解是：PyQt4是PySide的商业化版本，两者都是Qt进行维护。</p>
+<h1 id="PyQt4"><a href="#PyQt4" class="headerlink" title="PyQt4"></a>PyQt4</h1><p>我曾经在用PySide的时候遇到无法解决的Core Dump的bug，想转去试一下PyQt4看会不会好点，虽然结果是bug更频繁，但我还是列出安装PyQt4的一些小tips吧，希望后来人少走点弯路。<br>安装PyQt4之前是需要安装<strong>SIP</strong>的。SIP是一个自动为C和C++库生成Python扩展模块的工具。为了方便开发PyQt，SIP于1998被“Riverbank Computing”公司创造出来。不过，SIP不专用于PyQt，而是适用于所有的C和C++库。但据说好像现在只有PyQt一直在坚持用SIP，很多别人家的项目在需要对C或C++封装调用的时候都用SWIG了。</p>
+<p>在安装过程中最让人抓狂的SIP和PyQt4的版本对应问题：某个固定版本的SIP只能支持少数几个版本的PyQt，有比较麻烦的兼容性问题。曾经在安装时，要么提示SIP版本过高，PyQt无法编译；要么PyQt版本过高，SIP不能支持。<br>贴一个能够成功安装的博客链接：<a href="http://blog.csdn.net/dgatiger/article/details/50331361" target="_blank" rel="external">CentOS7.1下python2.7.10安装PyQt4</a></p>
+<p>文中SIP的安装代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">wget http://downloads.sourceforge.net/project/pyqt/sip/sip-4.17/sip-4.17.tar.gz</span><br><span class="line">tar xvf sip-4.17.tar.gz</span><br><span class="line">cd sip-4.17</span><br><span class="line">python configure.py</span><br><span class="line">make &amp; make install &amp; make clean</span><br></pre></td></tr></table></figure></p>
+<p>PyQt的安装代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">wget http://downloads.sourceforge.net/project/pyqt/PyQt4/PyQt-4.11.4/PyQt-x11-gpl-4.11.4.tar.gz</span><br><span class="line">tar xvf PyQt-x11-gpl-4.11.4.tar.gz</span><br><span class="line">cd PyQt-x11-gpl-4.11.4</span><br><span class="line">python configure.py -q  /usr/lib64/qt4/bin/qmake</span><br><span class="line">make &amp; make install &amp; make clean</span><br></pre></td></tr></table></figure></p>
+<p>这篇博客里用的是<strong>sip-4.17</strong>和<strong>PyQt-4.11.4</strong>是能够成功的一对版本。另外，Python2.7最高只能支持到PyQt4，PyQt5好像需要Python3.X的环境；同时Python2与Python3的兼容性也较差。所以为了避免版本上的麻烦，个人建议Python2还是老老实实用PyQt4，Python3的也使用对应的PyQt5。</p>
 
   </article>
   <div class="random-toc-area">
-  <button class="btn-hide-toc btn-hide-toc-show" style="display: none" onclick="TOCToggle()">显示目录</button>
-  <button class="btn-hide-toc btn-hide-toc-hide" onclick="TOCToggle()">隐藏目录</button>
+  <button class="btn-hide-toc btn-hide-toc-show" style="display: none" onclick="TOCToggle()">Show TOC</button>
+  <button class="btn-hide-toc btn-hide-toc-hide" onclick="TOCToggle()">Hide TOC</button>
   <div class="random-toc">
-    <h2>目录</h2>
-    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#PDF-Test"><span class="toc-text">PDF Test:</span></a></li></ol>
+    <h2>Table of Content</h2>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#PySide"><span class="toc-text">PySide</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#PyQt4"><span class="toc-text">PyQt4</span></a></li></ol>
   </div>
 </div>
 
@@ -159,9 +177,13 @@
   
 
   
-    <a href="/2016/06/12/hello-world/" class="next">下一篇 Hello World &rarr;</a>
+    <a href="/2016/06/12/hello-world/" class="next">Next post Hello World &rarr;</a>
   
 </nav>
+
+  <!-- JiaThis Button BEGIN -->
+
+<!-- JiaThis Button END -->
 
 
       
@@ -180,7 +202,7 @@
       
     </div>
   </div>
-  </div>
+</div>
 
 </div>
 
@@ -263,20 +285,36 @@ s.setAttribute('data-timestamp', +new Date());
 
 <div id="btn-view">Hide</div>
 
+<script>
+// is trigger analytics / tongji script
+var isIgnoreHost = false;
+
+if(window && window.location && window.location.host) {
+  isIgnoreHost = ["localhost","127.0.0.1"].some(function(address){
+    return 0 === window.location.host.indexOf(address);
+  });
+}
+
+var isTriggerAnalytics = !( true && isIgnoreHost );
+
+</script>
 
   <script>
-var _hmt = _hmt || [];
-(function() {
-  var hm = document.createElement("script");
-  hm.src = "//hm.baidu.com/hm.js?380bd64cb1b7792a4cb7151492fe6861";
-  var s = document.getElementsByTagName("script")[0]; 
-  s.parentNode.insertBefore(hm, s);
-})();
+if(isTriggerAnalytics) {
+  var _hmt = _hmt || [];
+  (function() {
+    var hm = document.createElement("script");
+    hm.src = "//hm.baidu.com/hm.js?380bd64cb1b7792a4cb7151492fe6861";
+    var s = document.getElementsByTagName("script")[0]; 
+    s.parentNode.insertBefore(hm, s);
+  })();
+}
 </script>
 
 
 
   <script>
+if(isTriggerAnalytics) {
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
   m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
@@ -284,6 +322,7 @@ var _hmt = _hmt || [];
 
   ga('create', 'UA-79173072-1', 'auto');
   ga('send', 'pageview');
+}
 
 </script>
 

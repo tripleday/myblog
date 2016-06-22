@@ -9,6 +9,12 @@ body {
     font-size: 16px;
   }
 }
+article {
+  line-height: 1.5em;
+}
+.highlight {
+  line-height: 1.25em;
+}
 a {
   text-decoration: none;
   color: #3a539b;
@@ -16,20 +22,21 @@ a {
 a:hover {
   text-decoration: underline;
 }
-#container {
+#outer-container {
   position: absolute;
   left: 50%;
   width: 960px;
   margin-left: -480px;
+  box-shadow: 0 0 2.5em #5d656c;
 }
 @media (max-width: 960px) {
-  #container {
+  #outer-container {
     width: 860px;
     margin-left: -430px;
   }
 }
 @media (max-width: 860px) {
-  #container {
+  #outer-container {
     width: 760px;
     margin-left: -380px;
   }
@@ -135,8 +142,8 @@ a:hover {
 }
 #menu-inner {
   line-height: 50px;
-  height: 50px;
-  height: 20px;
+  height: 49px;
+  border-bottom: 1px solid #ddd;
   padding: 0px 10px 0 10px;
   width: 940px;
 }
@@ -398,7 +405,7 @@ article img {
   color: #ea4c89;
 }
 .github:hover {
-  color: #569e3d;
+  color: #4078c0;
 }
 .coding:hover {
   color: #000;
@@ -417,7 +424,7 @@ article img {
 }
 .side-navigate {
   position: fixed;
-  top: 40%;
+  top: 60%;
   width: 100%;
   z-index: 2;
 }
@@ -547,18 +554,32 @@ figure.highlight {
 figure.highlight td.gutter {
   padding-right: 20px;
 }
+code {
+  font-family: Consolas, Monaco, Courier New, Lucida Console;
+  background-color: #ddd;
+  font-style: italic;
+  padding-left: 12px;
+  padding-right: 12px;
+}
+table .line {
+  font-family: Consolas, Monaco, Courier New, Lucida Console;
+}
 @media (max-width: 1060px) {
   .side-navigate {
     display: none;
   }
+  .jiathis_style {
+    display: none;
+    visibility: hidden;
+  }
 }
 @media (max-width: 760px) {
-  #container,
+  #outer-container,
   .random-center,
   #menu-outer {
     width: 100%;
   }
-  #container {
+  #outer-container {
     left: 0%;
     margin-left: 0px;
   }

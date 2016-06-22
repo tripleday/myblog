@@ -6,15 +6,29 @@
     <entry>
       <title><![CDATA[CentOS 6.5 下scrapy与ghost.py的安装干货]]></title>
       <url>http://tripleday.github.io/2016/06/16/centos&scrapy&ghost.py/</url>
-      <content type="html"><![CDATA[<p>之前一直在做Scrapy中关于网页动态内容的获取，主要目标是想获得javascript渲染后的网页html源码。<br>在转向使用ghost.py来做脚本解析之前的挖坑爬坑过程中，我已经造访过我所知的大大小小各种论坛、博客以及贴吧和知乎。其中有大方向上指导意义的有知乎里的相关问题：<br><a href="https://www.zhihu.com/question/21471960" target="_blank" rel="external">Python 爬虫如何获取 JS 生成的 URL 和网页内容？</a><br><a href="https://www.zhihu.com/question/36450326" target="_blank" rel="external">Python爬虫在处理由Javascript动态生成的页面时有哪些解决方案？</a><br>一些前人的技术博客如开源中国里<a href="http://my.oschina.net/u/1024140?ft=blog" target="_blank" rel="external">斑ban</a>的<a href="http://my.oschina.net/u/1024140/blog/188154" target="_blank" rel="external">使用python，scrapy写（定制）爬虫的经验，资料，杂</a>。这篇博客里的总结让人受益匪浅，作者乃真大神，有很丰富的爬虫经验。<br>上述几个干货里提到的方法，我基本都去了解了一下，也照着其中的几个方向挖过坑，过些时间我把我在这方面爬的所有坑都总结到一篇博客里。<br>ghost.py算是我掉坑里时间最长的，也是曾给了我巨大希望的一个，虽然现在也弃了，弃的原因日后再说。其实，用ghost.py是在PyQt4的基础上转过去的，ghost.py是对PyQt4或者PySide的一个封装，需要安装其中一个才能运行。<br>当然挖坑的第一步就是装环境了，win7上安装简便得多，但到linux下就没那么舒服了。<br>下面是我在CentOS 6.5上安装Scrapy、PySide和Ghost.py过程种查到的有用资料的整合，如嫌下面的字太小，可戳此PDF<a href="http://tripleday.github.io/pdf//CentOS%26scrapy%26ghost.py.pdf">源地址</a></p>
-<h1 id="PDF-Test"><a href="#PDF-Test" class="headerlink" title="PDF Test:"></a>PDF Test:</h1>
+      <content type="html"><![CDATA[<p>之前一直在做Scrapy中关于网页动态内容的获取，主要目标是想获得javascript渲染后的网页html源码。<br>在转向使用ghost.py来做脚本解析之前的挖坑爬坑过程中，我已经造访过我所知的大大小小各种论坛、博客以及贴吧和知乎。其中有大方向上指导意义的有知乎里的相关问题：</p>
+<ul>
+<li><a href="https://www.zhihu.com/question/21471960" target="_blank" rel="external">Python 爬虫如何获取 JS 生成的 URL 和网页内容？</a></li>
+<li><a href="https://www.zhihu.com/question/36450326" target="_blank" rel="external">Python爬虫在处理由Javascript动态生成的页面时有哪些解决方案？</a></li>
+</ul>
+<p>一些前人的技术博客如：</p>
+<ul>
+<li>开源中国上<a href="http://my.oschina.net/u/1024140?ft=blog" target="_blank" rel="external">斑ban</a>的<a href="http://my.oschina.net/u/1024140/blog/188154" target="_blank" rel="external">《使用python，scrapy写（定制）爬虫的经验，资料，杂》</a>。<br>这篇博客里的总结涉及到爬虫的很多方面，看后受益匪浅，作者乃真大神，有很丰富的爬虫经验。</li>
+</ul>
+<p>上述几个干货里提到的方法，我基本都去了解了一下，也照着其中的几个方向挖过坑，过些时间我把我在这方面爬的所有坑都总结到一篇博客里。<br>ghost.py算是我掉坑里时间最长的，也是差点就成功的一个，到现在也弃了，弃的原因日后再说。其实，用ghost.py是在PyQt4的基础上转过去的，ghost.py是对<strong>PyQt4</strong>或者<strong>PySide</strong>的一个封装，需要安装其中一个才能运行。</p>
+<h1 id="PySide"><a href="#PySide" class="headerlink" title="PySide"></a>PySide</h1><p>当然挖坑的第一步就是安装环境了，win7上安装简便得多，但到linux下就没那么舒服了。<br>下面是我在CentOS 6.5和python2.7.11的环境上安装Scrapy、PySide和Ghost.py过程中查到的有用资料的整合。如嫌下面的字太小，可戳此PDF<a href="http://tripleday.github.io/pdf//CentOS%26scrapy%26ghost.py.pdf">源地址</a>。<br>
 
 	<div class="row">
 	  <iframe src="http://nagland.github.io/viewer/web/viewer.html?val=http://tripleday.github.io/pdf//CentOS%26scrapy%26ghost.py.pdf" style="width:100%; height:900px"></iframe>
 	</div>
 
 
-
+<br>上面的PDF里ghost.py用的是PySide。PySide和PyQt4的功能和API近乎一致，我的理解是：PyQt4是PySide的商业化版本，两者都是Qt进行维护。</p>
+<h1 id="PyQt4"><a href="#PyQt4" class="headerlink" title="PyQt4"></a>PyQt4</h1><p>我曾经在用PySide的时候遇到无法解决的Core Dump的bug，想转去试一下PyQt4看会不会好点，虽然结果是bug更频繁，但我还是列出安装PyQt4的一些小tips吧，希望后来人少走点弯路。<br>安装PyQt4之前是需要安装<strong>SIP</strong>的。SIP是一个自动为C和C++库生成Python扩展模块的工具。为了方便开发PyQt，SIP于1998被“Riverbank Computing”公司创造出来。不过，SIP不专用于PyQt，而是适用于所有的C和C++库。但据说好像现在只有PyQt一直在坚持用SIP，很多别人家的项目在需要对C或C++封装调用的时候都用SWIG了。</p>
+<p>在安装过程中最让人抓狂的SIP和PyQt4的版本对应问题：某个固定版本的SIP只能支持少数几个版本的PyQt，有比较麻烦的兼容性问题。曾经在安装时，要么提示SIP版本过高，PyQt无法编译；要么PyQt版本过高，SIP不能支持。<br>贴一个能够成功安装的博客链接：<a href="http://blog.csdn.net/dgatiger/article/details/50331361" target="_blank" rel="external">CentOS7.1下python2.7.10安装PyQt4</a></p>
+<p>文中SIP的安装代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">wget http://downloads.sourceforge.net/project/pyqt/sip/sip-4.17/sip-4.17.tar.gz</span><br><span class="line">tar xvf sip-4.17.tar.gz</span><br><span class="line">cd sip-4.17</span><br><span class="line">python configure.py</span><br><span class="line">make &amp; make install &amp; make clean</span><br></pre></td></tr></table></figure></p>
+<p>PyQt的安装代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">wget http://downloads.sourceforge.net/project/pyqt/PyQt4/PyQt-4.11.4/PyQt-x11-gpl-4.11.4.tar.gz</span><br><span class="line">tar xvf PyQt-x11-gpl-4.11.4.tar.gz</span><br><span class="line">cd PyQt-x11-gpl-4.11.4</span><br><span class="line">python configure.py -q  /usr/lib64/qt4/bin/qmake</span><br><span class="line">make &amp; make install &amp; make clean</span><br></pre></td></tr></table></figure></p>
+<p>这篇博客里用的是<strong>sip-4.17</strong>和<strong>PyQt-4.11.4</strong>是能够成功的一对版本。另外，Python2.7最高只能支持到PyQt4，PyQt5好像需要Python3.X的环境；同时Python2与Python3的兼容性也较差。所以为了避免版本上的麻烦，个人建议Python2还是老老实实用PyQt4，Python3的也使用对应的PyQt5。</p>
 ]]></content>
     </entry>
     
@@ -42,12 +56,6 @@
   
     
     <entry>
-      <title><![CDATA[tags]]></title>
-      <url>http://tripleday.github.io/tags/index.html</url>
-      <content type="html"></content>
-    </entry>
-    
-    <entry>
       <title><![CDATA[About]]></title>
       <url>http://tripleday.github.io/about/index.html</url>
       <content type="html"><![CDATA[<h1 id="About-Me"><a href="#About-Me" class="headerlink" title="About Me"></a>About Me</h1><p>My name is Haotian Wu(吴昊天). I’m a master student in <a href="http://cse.seu.edu.cn/en/index.html" target="_blank" rel="external">School of Computer Science &amp; Engineering</a> at <a href="http://www.seu.edu.cn/english/main.htm" target="_blank" rel="external">Southeast University</a> and will graduate in Summer 2018.</p>
@@ -71,6 +79,12 @@
     <entry>
       <title><![CDATA[categories]]></title>
       <url>http://tripleday.github.io/categories/index.html</url>
+      <content type="html"></content>
+    </entry>
+    
+    <entry>
+      <title><![CDATA[tags]]></title>
+      <url>http://tripleday.github.io/tags/index.html</url>
       <content type="html"></content>
     </entry>
     
