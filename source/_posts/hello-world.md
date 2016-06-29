@@ -6,7 +6,7 @@ tags:
  - Hexo
 categories: Site Est
 photos: 
- - http://i.imgur.com/v74BWOG.jpg
+ - /uploads/img/20160612/cover.gif
 ---
 
 This is my **first blog** after I established this site using [Hexo](https://hexo.io/) and [random](https://github.com/stiekel/hexo-theme-random). 
@@ -20,13 +20,13 @@ $ hexo server
 $ hexo deploy
 ```
 # PDF Test:
-{% pdf http://tripleday.github.io/pdf/Clean%20Code.pdf %}
+{% pdf http://tripleday.github.io/uploads/pdf/Clean%20Code.pdf %}
 
 # iFrame Test:
 {% iframe http://www.seu.edu.cn/english/main.htm 100% 500 %}
 
 # Picture Test:
-![](http://i.imgur.com/woaa6Rc.jpg)
+![Facebook](/uploads/img/20160612/facebook.jpg)
 
 # Youtube Test:
 {% youtube https://youtu.be/QBJxGklvHRg %}

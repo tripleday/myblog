@@ -2,10 +2,10 @@ title: CentOS 6.5 下scrapy与ghost.py的安装干货
 date: 2016-06-16 13:34:08
 comments: true
 tags: 
- - 中文
  - CentOS
  - Scrapy
  - ghost.py
+ - python
 categories: Reviews
 ---
 之前一直在做Scrapy中关于网页动态内容的获取，主要目标是想获得javascript渲染后的网页html源码。
@@ -22,8 +22,8 @@ ghost.py算是我掉坑里时间最长的，也是差点就成功的一个，到
 
 # PySide
 当然挖坑的第一步就是安装环境了，win7上安装简便得多，但到linux下就没那么舒服了。
-下面是我在CentOS 6.5和python2.7.11的环境上安装Scrapy、PySide和Ghost.py过程中查到的有用资料的整合。如嫌下面的字太小，可戳此PDF[源地址](http://tripleday.github.io/pdf//CentOS%26scrapy%26ghost.py.pdf)。
-{% pdf http://tripleday.github.io/pdf//CentOS%26scrapy%26ghost.py.pdf %}
+下面是我在CentOS 6.5和python2.7.11的环境上安装Scrapy、PySide和Ghost.py过程中查到的有用资料的整合。如嫌下面的字太小，可戳此PDF[源地址](http://tripleday.github.io/uploads/pdf/CentOS%26scrapy%26ghost.py.pdf)。
+{% pdf http://tripleday.github.io/uploads/pdf/CentOS%26scrapy%26ghost.py.pdf %}
 上面的PDF里ghost.py用的是PySide。PySide和PyQt4的功能和API近乎一致，我的理解是：PyQt4是PySide的商业化版本，两者都是Qt进行维护。
 
 # PyQt4
@@ -34,7 +34,7 @@ ghost.py算是我掉坑里时间最长的，也是差点就成功的一个，到
 贴一个能够成功安装的博客链接：[CentOS7.1下python2.7.10安装PyQt4](http://blog.csdn.net/dgatiger/article/details/50331361)
 
 文中SIP的安装代码：
-```
+```sh
 wget http://downloads.sourceforge.net/project/pyqt/sip/sip-4.17/sip-4.17.tar.gz
 tar xvf sip-4.17.tar.gz
 cd sip-4.17
@@ -42,7 +42,7 @@ python configure.py
 make & make install & make clean
 ```
 PyQt的安装代码：
-```
+```sh
 wget http://downloads.sourceforge.net/project/pyqt/PyQt4/PyQt-4.11.4/PyQt-x11-gpl-4.11.4.tar.gz
 tar xvf PyQt-x11-gpl-4.11.4.tar.gz
 cd PyQt-x11-gpl-4.11.4
