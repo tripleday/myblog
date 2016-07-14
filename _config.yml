@@ -16,17 +16,7 @@ search:
   field: all
 
 # Math Plugin
-math:
-  engine: 'mathjax' # or 'katex'
-  mathjax:
-    src: custom_mathjax_source
-    config:
-      # MathJax config
-  katex:
-    css: custom_css_source
-    js: custom_js_source # not used
-    config:
-      # KaTeX config
+mathjax: ture
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'

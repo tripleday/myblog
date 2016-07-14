@@ -4,14 +4,40 @@
   
     
     <entry>
+      <title><![CDATA[HMM、MEMM和CRF的学习与总结]]></title>
+      <url>http://tripleday.github.io/2016/07/14/hmm-memm-crf/</url>
+      <content type="html"><![CDATA[<p>最近一直在学习NLP里最基础的几个语言模型：<strong>隐马尔科夫模型</strong>（Hidden Markov Model，HMM）、<strong>最大熵马尔科夫模型</strong>（Maximum Entropy Markov Model，MEMM）和<strong>条件随机场</strong>（Conditional Random Field，CRF）。这三种模型在自然语言处理中，可以解决分词（segment，Seg）、标注（Tag）和命名实体识别（Named Entity Recognition，Ner）等问题。学习的时候参考最多的两本书是李航老师的<strong>《统计学习方法》</strong>和吴军老师的<strong>《数学之美》</strong>。如需这两本书的电子版可以给我留言。</p>
+<p>我先分别简单介绍一下几种模型，具体的推导过程就不列出来，《统计学习方法》上有非常详细的数学原理。</p>
+<h1 id="HMM"><a href="#HMM" class="headerlink" title="HMM"></a>HMM</h1><p>下图是《统计学习方法》中的描述：<br><img src="/uploads/img/20160714/hmm.png" alt="隐马尔科夫模型"><br>HMM模型将状态序列看作马尔可夫链，一阶马尔可夫链式针对相邻状态的关系进行建模，其中每个状态对应一个概率函数。HMM是一种<strong>生成模型</strong>（Generative Model)，定义了联合概率分布 ，其中$x$和$y$分别表示观测序列和状态序列的随机变量。</p>
+<p>如果需要一些浅显简单的例子来理解HMM，下面的一个知乎问题和一篇博客可能有所帮助：</p>
+<ul>
+<li><a href="https://www.zhihu.com/question/20962240" target="_blank" rel="external">如何用简单易懂的例子解释隐马尔可夫模型？</a></li>
+<li><a href="http://blog.csdn.net/likelet/article/details/7056068" target="_blank" rel="external">隐马尔可夫模型（HMM）攻略</a></li>
+</ul>
+<h1 id="Maximum-Entropy-Model"><a href="#Maximum-Entropy-Model" class="headerlink" title="Maximum Entropy Model"></a>Maximum Entropy Model</h1><p>首先贴一下关于最大熵模型的定义：<br><img src="/uploads/img/20160714/me.png" alt="最大熵模型"><br>最大熵模型的基本思想就是不要把所有鸡蛋放到一个篮子里。式（6.12）中的$f_i$是<strong>特征函数</strong>，代表各个约束条件。最大熵模型就是在符合所有约束条件下作出<strong>最不偏倚</strong>的假设，求得可使熵最大化的概率分布。熵最大，表示该系统内各随机事件(变量)发生的概率是近似均匀的，等可能性的。</p>
+<p>最大熵模型可以使用任意的复杂相关特征（即特征函数），在性能上最大熵分类器超过了Bayes分类器。但是，作为一种分类器模型，这两种方法有一个共同的缺点：每个词都是单独进行分类的，标记状态之间的关系无法得到充分利用，具有马尔可夫链的HMM模型可以建立标记之间的马尔可夫关联性，这是最大熵模型所没有的。</p>
+<p>最大熵模型的<strong>优点</strong>：首先，最大熵统计模型获得的是所有满足约束条件的模型中信息熵极大的模型;其次，最大熵统计模型可以灵活地设置约束条件，通过约束条件的多少可以调节模型对未知数据的适应度和对已知数据的拟合程度;再次，它还能自然地解决了统计模型中参数平滑的问题。</p>
+<p>最大熵模型的<strong>不足</strong>：首先，最大熵统计模型中二值化特征只是记录特征的出现是否，而文本分类需要知道特征的强度，因此，它在分类方法中不是最优的;其次，由于算法收敛的速度较慢，所以导致最大熵统计模型它的计算代价较大，时空开销大;再次，数据稀疏问题比较严重。</p>
+<h1 id="MEMM"><a href="#MEMM" class="headerlink" title="MEMM"></a>MEMM</h1><p>最大熵马尔科夫模型把HMM模型和Maximum Entropy模型的优点集合成一个<strong>判别模型</strong>（Discriminative Model），这个模型允许状态转移概率依赖于序列中彼此之间非独立的特征上，从而将上下文信息引入到模型的学习和识别过程中，提高了识别的精确度，召回率也大大的提高，有实验证明，这个新的模型在序列标注任务上表现的比HMM和无状态的最大熵模型要好得多。<br><img src="/uploads/img/20160714/memm.png" alt="最大熵马尔科夫模型"><br>可以注意到MEMM在每个节点对所有可能的状态$y$求和然后用做局部归一化的分母。所以MEMM中节点状态转移的概率都是归一化的概率。</p>
+<p>HMM模型中存在两个假设：一是输出观察值之间严格独立，二是状态的转移过程中当前状态只与前一状态有关(一阶马尔可夫模型)。但MEMM模型克服了观察值之间严格独立产生的问题，但是由于状态之间的假设理论，使得该模型仍然存在<strong>标注偏置问题</strong>（Label Bias Problem）。</p>
+<p>关于标注偏置问题，网上最多的是下面这个例子解释：<br><img src="/uploads/img/20160714/label-bias-1.png" alt=""><br>路径1-1-1-1的概率：0.4*0.45*0.5=0.09<br>路径2-2-2-2的概率：0.018<br>路径1-2-1-2的概率：0.06<br>路径1-1-2-2的概率：0.066<br>由此可得最优路径为：1-1-1-1<br><img src="/uploads/img/20160714/label-bias-2.png" alt=""><br>而实际上，在上图中，状态1偏向于转移到状态2，而状态2总倾向于停留在状态2，这就是所谓的标注偏置问题，由于分支数不同，概率的分布不均衡，导致状态的转移存在不公平的情况。<br>例子的出处参见<a href="http://blog.csdn.net/lskyne/article/details/8669301" target="_blank" rel="external">标注偏置问题(Label Bias Problem)和HMM、MEMM、CRF模型比较</a></p>
+<h1 id="CRF"><a href="#CRF" class="headerlink" title="CRF"></a>CRF</h1><p><img src="/uploads/img/20160714/crf-1.png" alt="线性链条件随机场模型"><br>这是书上关于条件随机场的简化形式。本文所提的CRF都不是广义上最大熵准则建模条件概率的模型，而是约束在线性链上的特殊的条件随机场，称为线性链条件随机场（linear chain CRF）。<br><img src="/uploads/img/20160714/crf-2.png" alt="线性链条件随机场模型图示"><br>上式中也同样有$f_i$<strong>特征函数</strong>。之前我对模型中的特征函数一直不太理解。大家可以参考<a href="http://www.52nlp.cn/%E4%B8%AD%E6%96%87%E5%88%86%E8%AF%8D%E5%85%A5%E9%97%A8%E4%B9%8B%E5%AD%97%E6%A0%87%E6%B3%A8%E6%B3%954" target="_blank" rel="external">中文分词入门之字标注法4</a>这篇文章。文章主要介绍借用条件随机场工具“<a href="http://tenet.dl.sourceforge.net/project/crfpp/crfpp-win32/0.54/CRF%2B%2B-0.54.zip" target="_blank" rel="external">CRF++: Yet Another CRF toolkit</a>”来完成字标注中文分词的全过程。其中提及了特征模板文件，当然它的特征提取可能包含了前后多个节点。顺便推荐一下这个牛逼的群体博客<a href="http://www.52nlp.cn/" target="_blank" rel="external">52nlp</a>。</p>
+<p>$$p(y_1, …, y_T | x_1, …, x<em>T) &amp;=&amp; \Pi</em>{i=1}^T p(y_i | x_1, …, x<em>T, y</em>{i-1})$$</p>
+<p>$$<br>p(y_i|x_1,+…,+x<em>T,+y</em>{i-1})+&amp;=+<br>\frac{exp(\sum<em>{k=1}^K+\theta</em>{k}f_k(x_1,+…,+x<em>T,+y</em>{i-1},+y_i)}<br>{\sum<em>y+exp(\sum</em>{k=1}^K+\theta_{k}f_k(x_1,+…,+x<em>T,+y</em>{i-1},+y)}<br>$$</p>
+]]></content>
+    </entry>
+    
+    <entry>
       <title><![CDATA[基于Neo4j的知乎关系爬虫]]></title>
       <url>http://tripleday.github.io/2016/06/29/zhihu-link/</url>
-      <content type="html"><![CDATA[<p>前两天做了一个爬取知乎用户<strong>follow</strong>关系的爬虫。做这个爬虫是受一个知乎专栏的启发<a href="https://zhuanlan.zhihu.com/p/20546546" target="_blank" rel="external">Web Crawler with Python - 09.怎样通过爬虫找出我和轮子哥、四万姐之间的最短关系</a>，我有部分代码参考了xlzd。由于当时也想了解一下NoSQL里Graph Database，于是花了几天时间做了一个简单的爬虫，感觉收获不少。封面图片可以理解成是一个六度分隔理论的直观展现，也是我在做爬虫时的意外验证。</p>
+      <content type="html"><![CDATA[<p>前两天做了一个爬取知乎用户<strong>follow</strong>关系的爬虫。做这个爬虫是受一个知乎专栏的启发<a href="https://zhuanlan.zhihu.com/p/20546546" target="_blank" rel="external">Web Crawler with Python - 09.怎样通过爬虫找出我和轮子哥、四万姐之间的最短关系</a>，我有部分代码参考了xlzd。由于当时也想了解一下NoSQL里Graph Database，于是花了几天时间做了一个简单的爬虫，感觉收获不少。封面图片可以理解成是一个<strong>六度分隔理论</strong>的直观展现，也是我在做爬虫时的意外验证。</p>
 <h1 id="环境安装"><a href="#环境安装" class="headerlink" title="环境安装"></a>环境安装</h1><p>首先交代一下爬虫所用到的数据库和环境：</p>
 <h2 id="MongoDB"><a href="#MongoDB" class="headerlink" title="MongoDB"></a>MongoDB</h2><p>MongoDB一种基于分布式文件存储的数据库，属于NoSQL里的文档型数据库。它的性能较高，面向集合存储，爬虫所抓取的用户信息都存储在其中。<br>在python里使用MongoDB，只需要在本机下载安装MongoDB服务，在python的环境里安装pymongo依赖，<code>pip install pymongo</code>就可以了。如果嫌MongoDB的命令行操作不方便，可以装一个MongoDB的可视化工具<a href="https://robomongo.org/" target="_blank" rel="external">Robomongo</a>。</p>
-<h2 id="Neo4j"><a href="#Neo4j" class="headerlink" title="Neo4j"></a>Neo4j</h2><p>Neo4j是一个高性能的,NoSQL图形数据库，它将结构化数据存储在网络上而不是表中。Neo4j也可以被看作是一个高性能的图引擎，该引擎具有成熟数据库的所有特性。<br>关于Neo4j的安装，可以参考这篇博客<a href="http://blog.csdn.net/dyllove98/article/details/8635965" target="_blank" rel="external">Neo4j介绍与使用</a>。Win7环境下，官网<a href="https://neo4j.com/download/" target="_blank" rel="external">下载</a>可以一键安装Neo4j。<br>Neo4j使用类似SQL的查询语言<strong>Cypher</strong>，关于Cypher的使用和简单demo，可以参考<a href="http://www.uml.org.cn/sjjm/201203063.asp" target="_blank" rel="external">Cypher查询语言–Neo4j中的SQL</a>。当然，为了减少学习Cypher的时间成本，我在python环境中安装了<strong>py2neo</strong>，<code>pip install py2neo</code>。py2neo的handbook见<a href="http://py2neo.org/v3/" target="_blank" rel="external">The Py2neo v3 Handbook</a>，我对py2neo依赖库的理解是一个Neo4j的客户端，其中对Neo4j的操作进行了封装。调用py2neo的一个函数，它会自动转化为Cypher语言并以HTTP API向Neo4j服务端口提交一个事务。当然它也支持直接提交Cypher语句到Neo4j执行，有些复杂的数据操作比如寻找两点之间最短路径，py2neo没有提供直接的函数调用，需要我们自己编写Cypher。</p>
+<h2 id="Neo4j"><a href="#Neo4j" class="headerlink" title="Neo4j"></a>Neo4j</h2><p>Neo4j是一个高性能的,NoSQL图形数据库，它将结构化数据存储在网络上而不是表中。Neo4j也可以被看作是一个高性能的图引擎，该引擎具有成熟数据库的所有特性。<br>关于Neo4j的安装，可以参考这篇博客<a href="http://blog.csdn.net/dyllove98/article/details/8635965" target="_blank" rel="external">Neo4j介绍与使用</a>。Win7环境下，官网<a href="https://neo4j.com/download/" target="_blank" rel="external">下载</a>可以一键安装Neo4j。</p>
+<p>Neo4j使用类似SQL的查询语言<strong>Cypher</strong>，关于Cypher的使用和简单demo，可以参考<a href="http://www.uml.org.cn/sjjm/201203063.asp" target="_blank" rel="external">Cypher查询语言–Neo4j中的SQL</a>。当然，为了减少学习Cypher的时间成本，我在python环境中安装了<strong>py2neo</strong>，<code>pip install py2neo</code>。</p>
+<p>py2neo的handbook见<a href="http://py2neo.org/v3/" target="_blank" rel="external">The Py2neo v3 Handbook</a>。我对py2neo依赖库的理解：py2neo是一个Neo4j的客户端，其中对Neo4j的操作进行了封装。调用py2neo的一个函数，它会自动转化为Cypher语言并以HTTP API向Neo4j服务端口提交一个事务。当然它也支持直接提交Cypher语句到Neo4j执行，有些复杂的数据操作比如寻找两点之间最短路径，py2neo没有提供直接的函数调用，需要我们自己编写Cypher。</p>
 <h2 id="python依赖"><a href="#python依赖" class="headerlink" title="python依赖"></a>python依赖</h2><ul>
-<li>requests<br>request是一个非常好用的网络依赖包，API文档见<a href="http://www.python-requests.org/en/master/" target="_blank" rel="external">Requests: HTTP for Humans</a>。文档网站的名字“HTTP for Humans”，算是程序员的一种幽默吧。</li>
+<li>requests<br>requests是一个非常好用的网络依赖包，API文档见<a href="http://www.python-requests.org/en/master/" target="_blank" rel="external">Requests: HTTP for Humans</a>。文档网站的名字“HTTP for Humans”，算是程序员的一种幽默吧。</li>
 <li>BeautifulSoup<br>BeautifulSoup依赖库是一个非常实用的HTML解析器，不需要程序员再焦头烂额地写RegEx。虽然开发友好了，但解析时有时会出一些不可思议的bug。API文档见<a href="https://www.crummy.com/software/BeautifulSoup/bs4/doc.zh/" target="_blank" rel="external">Beautiful Soup 4.2.0 文档</a>。</li>
 </ul>
 <h1 id="爬虫概要"><a href="#爬虫概要" class="headerlink" title="爬虫概要"></a>爬虫概要</h1><h2 id="目的"><a href="#目的" class="headerlink" title="目的"></a>目的</h2><p>我爬虫的目的非常简单，和开头的那篇专栏一样：知乎大V—轮子哥（<strong>vczh</strong>）需要通过多少人才能认识并关注我？这里的认识是指单方面的知道，即成为我的follower（不需要为followee，虽然这是肯定的），知道这世界原来还有个知乎用户“<strong>三天三夜</strong>”。</p>
@@ -22,7 +48,7 @@
 <li>知乎用户的唯一性不是靠用户名，而是html里内嵌隐藏的<strong>data-id</strong>，在ajax获取数据是发送的表单数据里也需要这个值。所以Neo4j中使用此值可以唯一标识用户。</li>
 <li>BeautifulSoup的官方文档里的一张解析器对比表格</li>
 </ul>
-<p><img src="/uploads/img/20160629/bs.png" alt="BeautifulSoup解析器对比"><br>实际使用钟，在解析<code>https://www.zhihu.com/people/hong-ming-da</code>这条链接时，lxml解析一直都会出错，换成html.parser后解析成功。所以html.parser虽然解析速度慢，但容错性更好一点。</p>
+<p><img src="/uploads/img/20160629/bs.png" alt="BeautifulSoup解析器对比"><br>实际使用中，在解析<code>https://www.zhihu.com/people/hong-ming-da</code>这条链接时，lxml解析一直都会出错，换成html.parser后解析成功。所以html.parser虽然解析速度慢，但容错性更好一点。</p>
 <ul>
 <li>其他的细节想到后再补充。</li>
 </ul>
@@ -34,7 +60,7 @@
     
     <entry>
       <title><![CDATA[CentOS 6.5 下scrapy与ghost.py的安装干货]]></title>
-      <url>http://tripleday.github.io/2016/06/16/centos&scrapy&ghost.py/</url>
+      <url>http://tripleday.github.io/2016/06/16/centos-scrapy-ghost.py/</url>
       <content type="html"><![CDATA[<p>之前一直在做Scrapy中关于网页动态内容的获取，主要目标是想获得javascript渲染后的网页html源码。<br>在转向使用ghost.py来做脚本解析之前的挖坑爬坑过程中，我已经造访过我所知的大大小小各种论坛、博客以及贴吧和知乎。其中有大方向上指导意义的有知乎里的相关问题：</p>
 <ul>
 <li><a href="https://www.zhihu.com/question/21471960" target="_blank" rel="external">Python 爬虫如何获取 JS 生成的 URL 和网页内容？</a></li>
@@ -44,16 +70,18 @@
 <ul>
 <li>开源中国上<a href="http://my.oschina.net/u/1024140?ft=blog" target="_blank" rel="external">斑ban</a>的<a href="http://my.oschina.net/u/1024140/blog/188154" target="_blank" rel="external">《使用python，scrapy写（定制）爬虫的经验，资料，杂》</a>。<br>这篇博客里的总结涉及到爬虫的很多方面，看后受益匪浅，作者乃真大神，有很丰富的爬虫经验。</li>
 </ul>
-<p>上述几个干货里提到的方法，我基本都去了解了一下，也照着其中的几个方向挖过坑，过些时间我把我在这方面爬的所有坑都总结到一篇博客里。<br>ghost.py算是我掉坑里时间最长的，也是差点就成功的一个，到现在也弃了，弃的原因日后再说。其实，用ghost.py是在PyQt4的基础上转过去的，ghost.py是对<strong>PyQt4</strong>或者<strong>PySide</strong>的一个封装，需要安装其中一个才能运行。</p>
-<h1 id="PySide"><a href="#PySide" class="headerlink" title="PySide"></a>PySide</h1><p>当然挖坑的第一步就是安装环境了，win7上安装简便得多，但到linux下就没那么舒服了。<br>下面是我在CentOS 6.5和python2.7.11的环境上安装Scrapy、PySide和Ghost.py过程中查到的有用资料的整合。如嫌下面的字太小，可戳此PDF<a href="http://tripleday.github.io/uploads/pdf/CentOS%26scrapy%26ghost.py.pdf">源地址</a>。<br>
+<p>上述几个干货里提到的方法，我基本都去了解了一下，也照着其中的几个方向挖过坑，过些时间我把我在这方面爬的所有坑都总结到一篇博客里。</p>
+<p>ghost.py算是我掉坑里时间最长的，也是差点就成功的一个，到现在也弃了，弃的原因日后再说。其实，用ghost.py是在PyQt4的基础上转过去的，ghost.py是对<strong>PyQt4</strong>或者<strong>PySide</strong>的一个封装，需要安装其中一个才能运行。</p>
+<h1 id="PySide"><a href="#PySide" class="headerlink" title="PySide"></a>PySide</h1><p>当然挖坑的第一步就是安装环境了，win7上安装简便得多，但到linux下就没那么舒服了。<br>下面是我在CentOS 6.5和python2.7.11的环境上安装Scrapy、PySide和Ghost.py过程中查到的有用资料的整合。如嫌下面的字太小，可戳此PDF<a href="http://tripleday.github.io/uploads/pdf/CentOS-scrapy-ghost.py.pdf">源地址</a>。<br>
 
 	<div class="row">
-	  <iframe src="http://nagland.github.io/viewer/web/viewer.html?val=http://tripleday.github.io/uploads/pdf/CentOS%26scrapy%26ghost.py.pdf" style="width:100%; height:900px"></iframe>
+	  <iframe src="http://nagland.github.io/viewer/web/viewer.html?val=http://tripleday.github.io/uploads/pdf/CentOS-scrapy-ghost.py.pdf" style="width:100%; height:900px"></iframe>
 	</div>
 
 
 <br>上面的PDF里ghost.py用的是PySide。PySide和PyQt4的功能和API近乎一致，我的理解是：PyQt4是PySide的商业化版本，两者都是Qt进行维护。</p>
-<h1 id="PyQt4"><a href="#PyQt4" class="headerlink" title="PyQt4"></a>PyQt4</h1><p>我曾经在用PySide的时候遇到无法解决的Core Dump的bug，想转去试一下PyQt4看会不会好点，虽然结果是bug更频繁，但我还是列出安装PyQt4的一些小tips吧，希望后来人少走点弯路。<br>安装PyQt4之前是需要安装<strong>SIP</strong>的。SIP是一个自动为C和C++库生成Python扩展模块的工具。为了方便开发PyQt，SIP于1998被“Riverbank Computing”公司创造出来。不过，SIP不专用于PyQt，而是适用于所有的C和C++库。但据说好像现在只有PyQt一直在坚持用SIP，很多别人家的项目在需要对C或C++封装调用的时候都用SWIG了。</p>
+<h1 id="PyQt4"><a href="#PyQt4" class="headerlink" title="PyQt4"></a>PyQt4</h1><p>我曾经在用PySide的时候遇到无法解决的Core Dump的bug，想转去试一下PyQt4看会不会好点，虽然结果是bug更频繁，但我还是列出安装PyQt4的一些小tips吧，希望后来人少走点弯路。</p>
+<p>安装PyQt4之前是需要安装<strong>SIP</strong>的。SIP是一个自动为C和C++库生成Python扩展模块的工具。为了方便开发PyQt，SIP于1998被“Riverbank Computing”公司创造出来。不过，SIP不专用于PyQt，而是适用于所有的C和C++库。但据说好像现在只有PyQt一直在坚持用SIP，很多别人家的项目在需要对C或C++封装调用的时候都用SWIG了。</p>
 <p>在安装过程中最让人抓狂的SIP和PyQt4的版本对应问题：某个固定版本的SIP只能支持少数几个版本的PyQt，有比较麻烦的兼容性问题。曾经在安装时，要么提示SIP版本过高，PyQt无法编译；要么PyQt版本过高，SIP不能支持。<br>贴一个能够成功安装的博客链接：<a href="http://blog.csdn.net/dgatiger/article/details/50331361" target="_blank" rel="external">CentOS7.1下python2.7.10安装PyQt4</a></p>
 <p>文中SIP的安装代码：<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">wget http://downloads.sourceforge.net/project/pyqt/sip/sip-4.17/sip-4.17.tar.gz</span><br><span class="line">tar xvf sip-4.17.tar.gz</span><br><span class="line"><span class="built_in">cd</span> sip-4.17</span><br><span class="line">python configure.py</span><br><span class="line">make &amp; make install &amp; make clean</span><br></pre></td></tr></table></figure></p>
 <p>PyQt的安装代码：<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">wget http://downloads.sourceforge.net/project/pyqt/PyQt4/PyQt-4.11.4/PyQt-x11-gpl-4.11.4.tar.gz</span><br><span class="line">tar xvf PyQt-x11-gpl-4.11.4.tar.gz</span><br><span class="line"><span class="built_in">cd</span> PyQt-x11-gpl-4.11.4</span><br><span class="line">python configure.py -q  /usr/lib64/qt4/bin/qmake</span><br><span class="line">make &amp; make install &amp; make clean</span><br></pre></td></tr></table></figure></p>
@@ -66,6 +94,7 @@
       <url>http://tripleday.github.io/2016/06/12/hello-world/</url>
       <content type="html"><![CDATA[<p>This is my <strong>first blog</strong> after I established this site using <a href="https://hexo.io/" target="_blank" rel="external">Hexo</a> and <a href="https://github.com/stiekel/hexo-theme-random" target="_blank" rel="external">random</a>.<br>Here are some tests for Hexo:</p>
 <h1 id="Code-Test"><a href="#Code-Test" class="headerlink" title="Code Test:"></a>Code Test:</h1><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ hexo clean</span><br><span class="line">$ hexo generate</span><br><span class="line">$ hexo server</span><br><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+<h1 id="Mathjax-Test"><a href="#Mathjax-Test" class="headerlink" title="Mathjax Test:"></a>Mathjax Test:</h1><p>$$\sum_{i=1}^n a_i=0$$<br>$$<br>\begin{eqnarray}<br>f(x_1,x_2,\ldots,x_n) = x_1^2 + x_2^2 + \cdots + x_n^2<br>\end{eqnarray}<br>$$<br>$$<br>\begin{eqnarray}<br>\nabla\cdot\vec{E} &amp;=&amp; \frac{\rho}{\epsilon_0} \<br>\nabla\cdot\vec{B} &amp;=&amp; 0 \<br>\nabla\times\vec{E} &amp;=&amp; -\frac{\partial B}{\partial t} \<br>\nabla\times\vec{B} &amp;=&amp; \mu_0\left(\vec{J}+\epsilon_0\frac{\partial E}{\partial t} \right)<br>\end{eqnarray}<br>$$</p>
 <h1 id="PDF-Test"><a href="#PDF-Test" class="headerlink" title="PDF Test:"></a>PDF Test:</h1>
 
 	<div class="row">
@@ -83,6 +112,18 @@
     
   
   
+    
+    <entry>
+      <title><![CDATA[categories]]></title>
+      <url>http://tripleday.github.io/categories/index.html</url>
+      <content type="html"></content>
+    </entry>
+    
+    <entry>
+      <title><![CDATA[tags]]></title>
+      <url>http://tripleday.github.io/tags/index.html</url>
+      <content type="html"></content>
+    </entry>
     
     <entry>
       <title><![CDATA[About]]></title>
@@ -103,18 +144,6 @@
 </ul>
 <h1 id="Contact"><a href="#Contact" class="headerlink" title="Contact"></a>Contact</h1><p>Just to avoid spams, here is the Base64 code of my e-mail address:<br><code>aGFvdGlhbnd1c2V1QGdtYWlsLmNvbQ==</code></p>
 ]]></content>
-    </entry>
-    
-    <entry>
-      <title><![CDATA[categories]]></title>
-      <url>http://tripleday.github.io/categories/index.html</url>
-      <content type="html"></content>
-    </entry>
-    
-    <entry>
-      <title><![CDATA[tags]]></title>
-      <url>http://tripleday.github.io/tags/index.html</url>
-      <content type="html"></content>
     </entry>
     
   

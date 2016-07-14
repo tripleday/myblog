@@ -9,7 +9,7 @@ categories: Crawler
 photos: 
  - /uploads/img/20160629/cover.jpg
 ---
-前两天做了一个爬取知乎用户**follow**关系的爬虫。做这个爬虫是受一个知乎专栏的启发[Web Crawler with Python - 09.怎样通过爬虫找出我和轮子哥、四万姐之间的最短关系](https://zhuanlan.zhihu.com/p/20546546)，我有部分代码参考了xlzd。由于当时也想了解一下NoSQL里Graph Database，于是花了几天时间做了一个简单的爬虫，感觉收获不少。封面图片可以理解成是一个六度分隔理论的直观展现，也是我在做爬虫时的意外验证。
+前两天做了一个爬取知乎用户**follow**关系的爬虫。做这个爬虫是受一个知乎专栏的启发[Web Crawler with Python - 09.怎样通过爬虫找出我和轮子哥、四万姐之间的最短关系](https://zhuanlan.zhihu.com/p/20546546)，我有部分代码参考了xlzd。由于当时也想了解一下NoSQL里Graph Database，于是花了几天时间做了一个简单的爬虫，感觉收获不少。封面图片可以理解成是一个**六度分隔理论**的直观展现，也是我在做爬虫时的意外验证。
 # 环境安装
 
 首先交代一下爬虫所用到的数据库和环境：
@@ -20,11 +20,14 @@ MongoDB一种基于分布式文件存储的数据库，属于NoSQL里的文档�
 ## Neo4j
 Neo4j是一个高性能的,NoSQL图形数据库，它将结构化数据存储在网络上而不是表中。Neo4j也可以被看作是一个高性能的图引擎，该引擎具有成熟数据库的所有特性。
 关于Neo4j的安装，可以参考这篇博客[Neo4j介绍与使用](http://blog.csdn.net/dyllove98/article/details/8635965)。Win7环境下，官网[下载](https://neo4j.com/download/)可以一键安装Neo4j。
-Neo4j使用类似SQL的查询语言**Cypher**，关于Cypher的使用和简单demo，可以参考[Cypher查询语言--Neo4j中的SQL](http://www.uml.org.cn/sjjm/201203063.asp)。当然，为了减少学习Cypher的时间成本，我在python环境中安装了**py2neo**，`pip install py2neo`。py2neo的handbook见[The Py2neo v3 Handbook](http://py2neo.org/v3/)，我对py2neo依赖库的理解是一个Neo4j的客户端，其中对Neo4j的操作进行了封装。调用py2neo的一个函数，它会自动转化为Cypher语言并以HTTP API向Neo4j服务端口提交一个事务。当然它也支持直接提交Cypher语句到Neo4j执行，有些复杂的数据操作比如寻找两点之间最短路径，py2neo没有提供直接的函数调用，需要我们自己编写Cypher。
+
+Neo4j使用类似SQL的查询语言**Cypher**，关于Cypher的使用和简单demo，可以参考[Cypher查询语言--Neo4j中的SQL](http://www.uml.org.cn/sjjm/201203063.asp)。当然，为了减少学习Cypher的时间成本，我在python环境中安装了**py2neo**，`pip install py2neo`。
+
+py2neo的handbook见[The Py2neo v3 Handbook](http://py2neo.org/v3/)。我对py2neo依赖库的理解：py2neo是一个Neo4j的客户端，其中对Neo4j的操作进行了封装。调用py2neo的一个函数，它会自动转化为Cypher语言并以HTTP API向Neo4j服务端口提交一个事务。当然它也支持直接提交Cypher语句到Neo4j执行，有些复杂的数据操作比如寻找两点之间最短路径，py2neo没有提供直接的函数调用，需要我们自己编写Cypher。
 
 ## python依赖
 * requests
-request是一个非常好用的网络依赖包，API文档见[Requests: HTTP for Humans](http://www.python-requests.org/en/master/)。文档网站的名字“HTTP for Humans”，算是程序员的一种幽默吧。
+requests是一个非常好用的网络依赖包，API文档见[Requests: HTTP for Humans](http://www.python-requests.org/en/master/)。文档网站的名字“HTTP for Humans”，算是程序员的一种幽默吧。
 * BeautifulSoup
 BeautifulSoup依赖库是一个非常实用的HTML解析器，不需要程序员再焦头烂额地写RegEx。虽然开发友好了，但解析时有时会出一些不可思议的bug。API文档见[Beautiful Soup 4.2.0 文档](https://www.crummy.com/software/BeautifulSoup/bs4/doc.zh/)。
 
