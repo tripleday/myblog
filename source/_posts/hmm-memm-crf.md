@@ -17,7 +17,7 @@ photos:
 
 下图是《统计学习方法》中的描述：
 ![隐马尔科夫模型](/uploads/img/20160714/hmm.png)
-HMM模型将状态序列看作马尔可夫链，一阶马尔可夫链式针对相邻状态的关系进行建模，其中每个状态对应一个概率函数。HMM是一种**生成模型**（Generative Model)，定义了联合概率分布 ，其中$x$和$y$分别表示观测序列和状态序列的随机变量。
+HMM模型将状态序列看作马尔可夫链，一阶马尔可夫链式针对相邻状态的关系进行建模，其中每个状态对应一个概率函数。HMM是一种**生成模型**（Generative Model），定义了联合概率分布 ，其中$x$和$y$分别表示观测序列和状态序列的随机变量。
 
 如果需要一些浅显简单的例子来理解HMM，下面的一个知乎问题和一篇博客可能有所帮助：
 - [如何用简单易懂的例子解释隐马尔可夫模型？](https://www.zhihu.com/question/20962240)
@@ -37,7 +37,7 @@ HMM模型将状态序列看作马尔可夫链，一阶马尔可夫链式针对�
 
 # MEMM
 
-最大熵马尔科夫模型把HMM模型和Maximum Entropy模型的优点集合成一个**判别模型**（Discriminative Model），这个模型允许状态转移概率依赖于序列中彼此之间非独立的特征上，从而将上下文信息引入到模型的学习和识别过程中，提高了识别的精确度，召回率也大大的提高，有实验证明，这个新的模型在序列标注任务上表现的比HMM和无状态的最大熵模型要好得多。
+最大熵马尔科夫模型把HMM模型和Maximum Entropy模型的优点集合成一种**生成模型**（Generative Model），这个模型允许状态转移概率依赖于序列中彼此之间非独立的特征上，从而将上下文信息引入到模型的学习和识别过程中，提高了识别的精确度，召回率也大大的提高，有实验证明，这个新的模型在序列标注任务上表现的比HMM和无状态的最大熵模型要好得多。
 ![最大熵马尔科夫模型](/uploads/img/20160714/memm.png)
 可以注意到MEMM在每个节点对所有可能的状态$y$求和然后用做局部归一化的分母。所以MEMM中节点状态转移的概率都是归一化的概率。
 
@@ -59,16 +59,22 @@ HMM模型中存在两个假设：一是输出观察值之间严格独立，二�
 ![线性链条件随机场模型](/uploads/img/20160714/crf-1.png)
 这是书上关于条件随机场的简化形式。本文所提的CRF都不是广义上最大熵准则建模条件概率的模型，而是约束在线性链上的特殊的条件随机场，称为线性链条件随机场（linear chain CRF）。
 ![线性链条件随机场模型图示](/uploads/img/20160714/crf-2.png)
-上式中也同样有$f_i$**特征函数**。之前我对模型中的特征函数一直不太理解。大家可以参考[中文分词入门之字标注法4](http://www.52nlp.cn/%E4%B8%AD%E6%96%87%E5%88%86%E8%AF%8D%E5%85%A5%E9%97%A8%E4%B9%8B%E5%AD%97%E6%A0%87%E6%B3%A8%E6%B3%954)这篇文章。文章主要介绍借用条件随机场工具“[CRF++: Yet Another CRF toolkit](http://tenet.dl.sourceforge.net/project/crfpp/crfpp-win32/0.54/CRF%2B%2B-0.54.zip)”来完成字标注中文分词的全过程。其中提及了特征模板文件，当然它的特征提取可能包含了前后多个节点。顺便推荐一下这个牛逼的群体博客[52nlp](http://www.52nlp.cn/)。
-
-$$p(y_1, \ldots, y_T | x_1, \ldots, x_T) &=& \Pi_{i=1}^T p(y_i | x_1, \ldots, x_T, y_{i-1})$$
-
-$$f(x_1,x_2,\ldots,x_n) = x_1^2 + x_2^2 + \cdots + x_n^2$$
+上式中也同样有$f_i$**特征函数**。之前我对模型中的特征函数一直不太理解。大家可以参考[中文分词入门之字标注法4](http://www.52nlp.cn/%E4%B8%AD%E6%96%87%E5%88%86%E8%AF%8D%E5%85%A5%E9%97%A8%E4%B9%8B%E5%AD%97%E6%A0%87%E6%B3%A8%E6%B3%954)这篇文章。文章主要介绍借用条件随机场工具“[CRF++: Yet Another CRF toolkit](http://tenet.dl.sourceforge.net/project/crfpp/crfpp-win32/0.54/CRF%2B%2B-0.54.zip)”来完成字标注中文分词的全过程。其中提及了特征模板文件，当然它的特征提取可能包含了前后多个节点的状态，不一定是严格的线性链条件随机场。顺便推荐一下这个非常厉害的群体博客[52nlp](http://www.52nlp.cn/)。
 
 $$
-p(y_i|x_1,+...,+x_T,+y_{i-1}) &=&
-\frac{exp(\sum_{k=1}^K+\theta_{k}f_k(x_1,+...,+x_T,+y_{i-1},+y_i)}
-{\sum_y+exp(\sum_{k=1}^K+\theta_{k}f_k(x_1,+...,+x_T,+y_{i-1},+y)}
+\begin{eqnarray}
+p(y_1, \ldots, y_T | x_1, \ldots, x_T) &=& \prod_{i=1}^T p(y_i | x_1, \ldots, x_T, y_{i-1}) \\
+p(y_i | x_1, \ldots, x_T, y_{i-1}) &=&
+\frac{exp(\sum\limits_{k=1}^K w_{k}f_k(x_1, \ldots, x_T, y_{i-1}, y_i)}
+{\sum\limits_y exp(\sum\limits_{k=1}^K w_{k}f_k(x_1, \ldots, x_T, y_{i-1}, y)}
+\end{eqnarray}
 $$
 
-https://www.zhihu.com/equation?tex=p%28y_1%2C+...%2C+y_T+%7C+x_1%2C+...%2C+x_T%29+%26%3D+%0A%5CPi_%7Bi%3D1%7D%5ET+p%28y_i%7Cx_1%2C+...%2C+x_T%2C+y_%7Bi-1%7D%29%0A%5C%5C%0Ap%28y_i%7Cx_1%2C+...%2C+x_T%2C+y_%7Bi-1%7D%29+%26%3D+%0A%5Cfrac%7Bexp%28%5Csum_%7Bk%3D1%7D%5EK+%5Ctheta_%7Bk%7Df_k%28x_1%2C+...%2C+x_T%2C+y_%7Bi-1%7D%2C+y_i%29%7D%0A%7B%5Csum_y+exp%28%5Csum_%7Bk%3D1%7D%5EK+%5Ctheta_%7Bk%7Df_k%28x_1%2C+...%2C+x_T%2C+y_%7Bi-1%7D%2C+y%29%7D%0A
+$$
+\begin{eqnarray}
+p(y|x) &=& \frac{p(y, x)}{\sum\limits_{y^{'}}p(y^{'}, x)}
+\\
+&=& \frac{\Pi_{t=1}^T exp(\sum\limits_{k=1}^K w_k f_k(y_t, y_{t-1}, x_t))}
+{\sum\limits_{y^{'}} \Pi_{t=1}^T exp(\sum\limits_{k=1}^K w_k f_k(y_t^{'}, y_{t-1}^{'}, x_t)) }
+\end{eqnarray}
+$$
