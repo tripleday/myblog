@@ -57,24 +57,51 @@ HMM模型中存在两个假设：一是输出观察值之间严格独立，二�
 # CRF
 
 ![线性链条件随机场模型](/uploads/img/20160714/crf-1.png)
-这是书上关于条件随机场的简化形式。本文所提的CRF都不是广义上最大熵准则建模条件概率的模型，而是约束在线性链上的特殊的条件随机场，称为线性链条件随机场（linear chain CRF）。
+这是书上关于条件随机场的简化形式。本文所提的CRF都不是广义上最大熵准则建模条件概率的条件随机场模型，而是约束在线性链上的特殊的条件随机场，称为线性链条件随机场（linear chain CRF）。CRF属于**判别模型**（Discrimitive Model）。
 ![线性链条件随机场模型图示](/uploads/img/20160714/crf-2.png)
-上式中也同样有$f_i$**特征函数**。之前我对模型中的特征函数一直不太理解。大家可以参考[中文分词入门之字标注法4](http://www.52nlp.cn/%E4%B8%AD%E6%96%87%E5%88%86%E8%AF%8D%E5%85%A5%E9%97%A8%E4%B9%8B%E5%AD%97%E6%A0%87%E6%B3%A8%E6%B3%954)这篇文章。文章主要介绍借用条件随机场工具“[CRF++: Yet Another CRF toolkit](http://tenet.dl.sourceforge.net/project/crfpp/crfpp-win32/0.54/CRF%2B%2B-0.54.zip)”来完成字标注中文分词的全过程。其中提及了特征模板文件，当然它的特征提取可能包含了前后多个节点的状态，不一定是严格的线性链条件随机场。顺便推荐一下这个非常厉害的群体博客[52nlp](http://www.52nlp.cn/)。
+上式中也同样有$f_i$**特征函数**。之前我对模型中的特征函数一直不太理解。大家可以参考[中文分词入门之字标注法4](http://www.52nlp.cn/%E4%B8%AD%E6%96%87%E5%88%86%E8%AF%8D%E5%85%A5%E9%97%A8%E4%B9%8B%E5%AD%97%E6%A0%87%E6%B3%A8%E6%B3%954)这篇文章。文章主要介绍借用条件随机场工具“[CRF++: Yet Another CRF toolkit](http://tenet.dl.sourceforge.net/project/crfpp/crfpp-win32/0.54/CRF%2B%2B-0.54.zip)”来完成字标注中文分词的全过程。其中提及了特征模板文件，它的特征提取可能包含了前后多个节点的观测序列。顺便推荐一下这个非常厉害的群体博客[52nlp](http://www.52nlp.cn/)。
+《数学之美》里“徐志摩喜欢林徽因”的例子也可供参考。
 
+CRF模型的**优点**：首先，CRF具有很强的推理能力，并且能够使用复杂、有重叠性和非独立的特征进行训练和推理，能够充分地利用上下文信息作为特征，还可以任意地添加其他外部特征，使得模型能够获取的信息非常丰富。其次，CRF的性能更好，CRF对特征的融合能力比较强，识别效果好于MEMM。
+
+CRF模型的**不足**：使用CRF方法的过程中，特征的选择和优化是影响结果的关键因素，特征选择问题的好与坏，直接决定了系统性能的高低。而且，CRF训练模型的时间较长，且获得的模型很大，在一般的PC机上无法运行。
+
+更多一些详细的CRF解释可以参考知乎的相关问题[如何用简单易懂的例子解释条件随机场（CRF）模型？它和HMM有什么区别？](https://www.zhihu.com/question/35866596)
+
+# MEMM与CRF区别
+
+上面的公式都是别人贴图里的，下面的公式是我走心地敲出来的，方便看出两者的差异。
+
+MEMM的公式表示如下：
 $$
-\begin{eqnarray}
+\begin{eqnarray\*}
 p(y_1, \ldots, y_T | x_1, \ldots, x_T) &=& \prod_{i=1}^T p(y_i | x_1, \ldots, x_T, y_{i-1}) \\
 p(y_i | x_1, \ldots, x_T, y_{i-1}) &=&
 \frac{exp(\sum\limits_{k=1}^K w_{k}f_k(x_1, \ldots, x_T, y_{i-1}, y_i)}
 {\sum\limits_y exp(\sum\limits_{k=1}^K w_{k}f_k(x_1, \ldots, x_T, y_{i-1}, y)}
-\end{eqnarray}
+\end{eqnarray\*}
 $$
-
+线性链CRF的公式表示如下：
 $$
-\begin{eqnarray}
-p(y|x) &=& \frac{p(y, x)}{\sum\limits_{y^{'}}p(y^{'}, x)}
+\begin{eqnarray\*}
+p(y|x) &=& \frac{p(y, x)}{\sum\limits_Y p(y, x)}
 \\
-&=& \frac{\Pi_{t=1}^T exp(\sum\limits_{k=1}^K w_k f_k(y_t, y_{t-1}, x_t))}
-{\sum\limits_{y^{'}} \Pi_{t=1}^T exp(\sum\limits_{k=1}^K w_k f_k(y_t^{'}, y_{t-1}^{'}, x_t)) }
-\end{eqnarray}
+&=& \frac{\prod\limits_{t=1}^T exp(\sum\limits_{k=1}^K w_k f_k(y_t, y_{t-1}, x))}
+{\sum\limits_Y \prod\limits_{t=1}^T exp(\sum\limits_{k=1}^K w_k f_k(y_t, y_{t-1}, x)) }
+\end{eqnarray\*}
 $$
+不同点：
+- 首先，CRF是**判别模型**，而MEMM我个人理解是**生成模型**。MEMM是在HMM基础上的优化，它保留了“状态的转移过程中当前状态只与前一状态有关”这一个独立性假设，状态与状态之间的转移仍是遵循一个**不大于1**的、只在同一结点作归一化的局部归一化概率，与HMM的思想相近。
+- MEMM和CRF的**归一化位置**不同。从上面的公式可以看出，MEMM是在given前一状态$y_{i-1}$的情况下，对下一个节点所有可能的$y_i$作局部的归一化，利用最大熵模型，从观测序列$x$和前一状态$y_{i-1}$中的特征学习到$y_i$的分布。而CRF是对$Y$中所有可能的状态序列作全局的归一化，假设每个节点有$L$中状态，序列中有$T$个节点，那么所有可能的状态序列数为$L^T$，这导致在模型学习时会较为复杂。
+- MEMM在用**viterbi算法**求解最优路径时，每次乘上的是个归一化概率，而CRF乘上的是一个自然指数，没有经过归一化。当遇到某些不公平的情况：某条路径自然指数本身很小，但归一化后变为一个很大的概率比如0.9，而同时即使别的路径自然指数很大，但它们竞争也激烈，归一化后的概率反而不大，这样前一条路径就会被选中，导致了之前提过的标记偏置问题，而CRF可以避免这一问题。
+
+关于MEMM和CRF两者的区别，推荐可以参考下面的一个知乎问题和一篇博客：
+- [MEMM和CRF有什么不同？](https://www.zhihu.com/question/30869789)
+- [统计模型之间的比较，HMM，最大熵模型，CRF条件随机场 ](http://blog.sina.com.cn/s/blog_8af106960102v0v1.html)
+
+# 写在最后
+
+关于用做封面的那张图，是对相关模型一个非常抽象、宏观的转换图，感觉非常精髓，出处为[An introduction to conditional random fields](http://homepages.inf.ed.ac.uk/csutton/publications/crftut-fnt.pdf)。
+
+以上均为本小白个人理解，如有任何不当或者错误，欢迎指正。
+

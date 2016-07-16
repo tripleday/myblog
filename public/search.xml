@@ -21,9 +21,24 @@
 <h1 id="MEMM"><a href="#MEMM" class="headerlink" title="MEMM"></a>MEMM</h1><p>最大熵马尔科夫模型把HMM模型和Maximum Entropy模型的优点集合成一种<strong>生成模型</strong>（Generative Model），这个模型允许状态转移概率依赖于序列中彼此之间非独立的特征上，从而将上下文信息引入到模型的学习和识别过程中，提高了识别的精确度，召回率也大大的提高，有实验证明，这个新的模型在序列标注任务上表现的比HMM和无状态的最大熵模型要好得多。<br><img src="/uploads/img/20160714/memm.png" alt="最大熵马尔科夫模型"><br>可以注意到MEMM在每个节点对所有可能的状态$y$求和然后用做局部归一化的分母。所以MEMM中节点状态转移的概率都是归一化的概率。</p>
 <p>HMM模型中存在两个假设：一是输出观察值之间严格独立，二是状态的转移过程中当前状态只与前一状态有关(一阶马尔可夫模型)。但MEMM模型克服了观察值之间严格独立产生的问题，但是由于状态之间的假设理论，使得该模型仍然存在<strong>标注偏置问题</strong>（Label Bias Problem）。</p>
 <p>关于标注偏置问题，网上最多的是下面这个例子解释：<br><img src="/uploads/img/20160714/label-bias-1.png" alt=""><br>路径1-1-1-1的概率：0.4*0.45*0.5=0.09<br>路径2-2-2-2的概率：0.018<br>路径1-2-1-2的概率：0.06<br>路径1-1-2-2的概率：0.066<br>由此可得最优路径为：1-1-1-1<br><img src="/uploads/img/20160714/label-bias-2.png" alt=""><br>而实际上，在上图中，状态1偏向于转移到状态2，而状态2总倾向于停留在状态2，这就是所谓的标注偏置问题，由于分支数不同，概率的分布不均衡，导致状态的转移存在不公平的情况。<br>例子的出处参见<a href="http://blog.csdn.net/lskyne/article/details/8669301" target="_blank" rel="external">标注偏置问题(Label Bias Problem)和HMM、MEMM、CRF模型比较</a></p>
-<h1 id="CRF"><a href="#CRF" class="headerlink" title="CRF"></a>CRF</h1><p><img src="/uploads/img/20160714/crf-1.png" alt="线性链条件随机场模型"><br>这是书上关于条件随机场的简化形式。本文所提的CRF都不是广义上最大熵准则建模条件概率的模型，而是约束在线性链上的特殊的条件随机场，称为线性链条件随机场（linear chain CRF）。<br><img src="/uploads/img/20160714/crf-2.png" alt="线性链条件随机场模型图示"><br>上式中也同样有$f_i$<strong>特征函数</strong>。之前我对模型中的特征函数一直不太理解。大家可以参考<a href="http://www.52nlp.cn/%E4%B8%AD%E6%96%87%E5%88%86%E8%AF%8D%E5%85%A5%E9%97%A8%E4%B9%8B%E5%AD%97%E6%A0%87%E6%B3%A8%E6%B3%954" target="_blank" rel="external">中文分词入门之字标注法4</a>这篇文章。文章主要介绍借用条件随机场工具“<a href="http://tenet.dl.sourceforge.net/project/crfpp/crfpp-win32/0.54/CRF%2B%2B-0.54.zip" target="_blank" rel="external">CRF++: Yet Another CRF toolkit</a>”来完成字标注中文分词的全过程。其中提及了特征模板文件，当然它的特征提取可能包含了前后多个节点的状态，不一定是严格的线性链条件随机场。顺便推荐一下这个非常厉害的群体博客<a href="http://www.52nlp.cn/" target="_blank" rel="external">52nlp</a>。</p>
-<p>$$<br>\begin{eqnarray}<br>p(y_1, \ldots, y_T | x_1, \ldots, x_T) &amp;=&amp; \prod_{i=1}^T p(y_i | x_1, \ldots, x_T, y_{i-1}) \\<br>p(y_i | x_1, \ldots, x_T, y_{i-1}) &amp;=&amp;<br>\frac{exp(\sum\limits_{k=1}^K w_{k}f_k(x_1, \ldots, x_T, y_{i-1}, y_i)}<br>{\sum\limits_y exp(\sum\limits_{k=1}^K w_{k}f_k(x_1, \ldots, x_T, y_{i-1}, y)}<br>\end{eqnarray}<br>$$</p>
-<p>$$<br>\begin{eqnarray}<br>p(y|x) &amp;=&amp; \frac{p(y, x)}{\sum\limits_{y^{‘}}p(y^{‘}, x)}<br>\\<br>&amp;=&amp; \frac{\Pi_{t=1}^T exp(\sum\limits_{k=1}^K w_k f_k(y_t, y_{t-1}, x_t))}<br>{\sum\limits_{y^{‘}} \Pi_{t=1}^T exp(\sum\limits_{k=1}^K w_k f_k(y_t^{‘}, y_{t-1}^{‘}, x_t)) }<br>\end{eqnarray}<br>$$</p>
+<h1 id="CRF"><a href="#CRF" class="headerlink" title="CRF"></a>CRF</h1><p><img src="/uploads/img/20160714/crf-1.png" alt="线性链条件随机场模型"><br>这是书上关于条件随机场的简化形式。本文所提的CRF都不是广义上最大熵准则建模条件概率的条件随机场模型，而是约束在线性链上的特殊的条件随机场，称为线性链条件随机场（linear chain CRF）。CRF属于<strong>判别模型</strong>（Discrimitive Model）。<br><img src="/uploads/img/20160714/crf-2.png" alt="线性链条件随机场模型图示"><br>上式中也同样有$f_i$<strong>特征函数</strong>。之前我对模型中的特征函数一直不太理解。大家可以参考<a href="http://www.52nlp.cn/%E4%B8%AD%E6%96%87%E5%88%86%E8%AF%8D%E5%85%A5%E9%97%A8%E4%B9%8B%E5%AD%97%E6%A0%87%E6%B3%A8%E6%B3%954" target="_blank" rel="external">中文分词入门之字标注法4</a>这篇文章。文章主要介绍借用条件随机场工具“<a href="http://tenet.dl.sourceforge.net/project/crfpp/crfpp-win32/0.54/CRF%2B%2B-0.54.zip" target="_blank" rel="external">CRF++: Yet Another CRF toolkit</a>”来完成字标注中文分词的全过程。其中提及了特征模板文件，它的特征提取可能包含了前后多个节点的观测序列。顺便推荐一下这个非常厉害的群体博客<a href="http://www.52nlp.cn/" target="_blank" rel="external">52nlp</a>。<br>《数学之美》里“徐志摩喜欢林徽因”的例子也可供参考。</p>
+<p>CRF模型的<strong>优点</strong>：首先，CRF具有很强的推理能力，并且能够使用复杂、有重叠性和非独立的特征进行训练和推理，能够充分地利用上下文信息作为特征，还可以任意地添加其他外部特征，使得模型能够获取的信息非常丰富。其次，CRF的性能更好，CRF对特征的融合能力比较强，识别效果好于MEMM。</p>
+<p>CRF模型的<strong>不足</strong>：使用CRF方法的过程中，特征的选择和优化是影响结果的关键因素，特征选择问题的好与坏，直接决定了系统性能的高低。而且，CRF训练模型的时间较长，且获得的模型很大，在一般的PC机上无法运行。</p>
+<p>更多一些详细的CRF解释可以参考知乎的相关问题<a href="https://www.zhihu.com/question/35866596" target="_blank" rel="external">如何用简单易懂的例子解释条件随机场（CRF）模型？它和HMM有什么区别？</a></p>
+<h1 id="MEMM与CRF区别"><a href="#MEMM与CRF区别" class="headerlink" title="MEMM与CRF区别"></a>MEMM与CRF区别</h1><p>上面的公式都是别人贴图里的，下面的公式是我走心地敲出来的，方便看出两者的差异。</p>
+<p>MEMM的公式表示如下：<br>$$<br>\begin{eqnarray*}<br>p(y_1, \ldots, y_T | x_1, \ldots, x_T) &amp;=&amp; \prod_{i=1}^T p(y_i | x_1, \ldots, x_T, y_{i-1}) \\<br>p(y_i | x_1, \ldots, x_T, y_{i-1}) &amp;=&amp;<br>\frac{exp(\sum\limits_{k=1}^K w_{k}f_k(x_1, \ldots, x_T, y_{i-1}, y_i)}<br>{\sum\limits_y exp(\sum\limits_{k=1}^K w_{k}f_k(x_1, \ldots, x_T, y_{i-1}, y)}<br>\end{eqnarray*}<br>$$<br>线性链CRF的公式表示如下：<br>$$<br>\begin{eqnarray*}<br>p(y|x) &amp;=&amp; \frac{p(y, x)}{\sum\limits_Y p(y, x)}<br>\\<br>&amp;=&amp; \frac{\prod\limits_{t=1}^T exp(\sum\limits_{k=1}^K w_k f_k(y_t, y_{t-1}, x))}<br>{\sum\limits_Y \prod\limits_{t=1}^T exp(\sum\limits_{k=1}^K w_k f_k(y_t, y_{t-1}, x)) }<br>\end{eqnarray*}<br>$$<br>不同点：</p>
+<ul>
+<li>首先，CRF是判别模型，而MEMM我个人理解是生成模型。MEMM是在HMM基础上的优化，它保留了“状态的转移过程中当前状态只与前一状态有关”这一个独立性假设，状态与状态之间的转移仍是遵循一个<strong>不大于1</strong>的、只在同一结点作归一化的局部归一化概率，与HMM的思想相近。</li>
+<li>MEMM和CRF的<strong>归一化位置</strong>不同。从上面的公式可以看出，MEMM是在given前一状态$y_{i-1}$的情况下，对下一个节点所有可能的$y_i$作局部的归一化，利用最大熵模型，从观测序列$x$和前一状态$y_{i-1}$中的特征学习到$y_i$的分布。而CRF是对$Y$中所有可能的状态序列作全局的归一化，假设每个节点有$L$中状态，序列中有$T$个节点，那么所有可能的状态序列数为$L^T$，这导致在模型学习时会较为复杂。</li>
+<li>MEMM在用<strong>viterbi算法</strong>求解最优路径时，每次乘上的是个归一化概率，而CRF乘上的是一个自然指数，没有经过归一化。当遇到某些不公平的情况：某条路径自然指数本身很小，但归一化后变为一个很大的概率比如0.9，而同时即使别的路径自然指数很大，但它们竞争也激烈，归一化后的概率反而不大，这样前一条路径就会被选中，导致了之前提过的标记偏置问题，而CRF可以避免这一问题。</li>
+</ul>
+<p>关于MEMM和CRF两者的区别，推荐可以参考下面的一个知乎问题和一篇博客：</p>
+<ul>
+<li><a href="https://www.zhihu.com/question/30869789" target="_blank" rel="external">MEMM和CRF有什么不同？</a></li>
+<li><a href="http://blog.sina.com.cn/s/blog_8af106960102v0v1.html" target="_blank" rel="external">统计模型之间的比较，HMM，最大熵模型，CRF条件随机场 </a></li>
+</ul>
+<h1 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h1><p>关于用做封面的那张图，是对相关模型一个非常抽象、宏观的转换图，感觉非常精髓，出处为<a href="http://homepages.inf.ed.ac.uk/csutton/publications/crftut-fnt.pdf" target="_blank" rel="external">An introduction to conditional random fields</a>。</p>
+<p>以上均为本小白个人理解，如有任何不当或者错误，欢迎指正。</p>
 ]]></content>
     </entry>
     
@@ -116,18 +131,6 @@
   
     
     <entry>
-      <title><![CDATA[categories]]></title>
-      <url>http://tripleday.github.io/categories/index.html</url>
-      <content type="html"></content>
-    </entry>
-    
-    <entry>
-      <title><![CDATA[tags]]></title>
-      <url>http://tripleday.github.io/tags/index.html</url>
-      <content type="html"></content>
-    </entry>
-    
-    <entry>
       <title><![CDATA[About]]></title>
       <url>http://tripleday.github.io/about/index.html</url>
       <content type="html"><![CDATA[<h1 id="About-Me"><a href="#About-Me" class="headerlink" title="About Me"></a>About Me</h1><p>My name is Haotian Wu(吴昊天). I’m a master student in <a href="http://cse.seu.edu.cn/en/index.html" target="_blank" rel="external">School of Computer Science &amp; Engineering</a> at <a href="http://www.seu.edu.cn/english/main.htm" target="_blank" rel="external">Southeast University</a> and will graduate in Summer 2018.</p>
@@ -146,6 +149,18 @@
 </ul>
 <h1 id="Contact"><a href="#Contact" class="headerlink" title="Contact"></a>Contact</h1><p>Just to avoid spams, here is the Base64 code of my e-mail address:<br><code>aGFvdGlhbnd1c2V1QGdtYWlsLmNvbQ==</code></p>
 ]]></content>
+    </entry>
+    
+    <entry>
+      <title><![CDATA[tags]]></title>
+      <url>http://tripleday.github.io/tags/index.html</url>
+      <content type="html"></content>
+    </entry>
+    
+    <entry>
+      <title><![CDATA[categories]]></title>
+      <url>http://tripleday.github.io/categories/index.html</url>
+      <content type="html"></content>
     </entry>
     
   
