@@ -45,6 +45,7 @@ BeautifulSoup依赖库是一个非常实用的HTML解析器，不需要程序员
 
 ![BeautifulSoup解析器对比](/uploads/img/20160629/bs.png)
 实际使用中，在解析`https://www.zhihu.com/people/hong-ming-da`这条链接时，lxml解析一直都会出错，换成html.parser后解析成功。所以html.parser虽然解析速度慢，但容错性更好一点。
+* 代码中有关知乎爬虫的代码，我是在[egrcc/zhihu-python](https://github.com/egrcc/zhihu-python)的基础上改动的，非常感谢原作者的分享。
 * 其他的细节想到后再补充。
 
 # 爬取结果
