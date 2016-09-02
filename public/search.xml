@@ -4,18 +4,64 @@
   
     
     <entry>
+      <title><![CDATA[NLP中使用HMM进行tag、seg和ner]]></title>
+      <url>http://tripleday.github.io/2016/07/28/hmm4nlp/</url>
+      <content type="html"><![CDATA[<p>看到网上有很多分词、词性标注的工具，但大多是已经训练过的模型，有些可以添加一些自定义的词典来定制模型。趁同学给了我一些nlp的中文语料数据，我就尝试自己实现一个简单的HMM（隐马尔科夫模型）来进行中文的词性标注（Part-of-Speech tagging或POS tagging，以下简称<strong>tag</strong>）、分词（Segmentation，以下简称<strong>seg</strong>）和命名实体识别（Named Entity Recognition，以下简称<strong>ner</strong>）。</p>
+<p>具体关于HMM的内容，这篇博文里面不做赘述，读者可以自行学习了解，也可以参考本人之前的一篇博文<a href="http://tripleday.github.io/2016/07/14/hmm-memm-crf/">HMM、MEMM和CRF的学习总结</a>和里面提供的一些链接。</p>
+<h1 id="代码相关"><a href="#代码相关" class="headerlink" title="代码相关"></a>代码相关</h1><p>整个HMM的代码和相关测试数据已上传至Github上，附上<a href="https://github.com/tripleday/simple_HMM" target="_blank" rel="external">链接</a>。整个代码的实现有部分学习参考博客<a href="http://blog.csdn.net/soundfuture/article/details/4135216" target="_blank" rel="external">python词法分析(分词+词性标注）</a>，感谢博主的分享。</p>
+<ul>
+<li><p>文件图如下：<br><img src="/uploads/img/20160728/file.png" alt=""><br>这四个文件夹中都是用的是同一个HMM模型，只是测试数据和目标任务不同而已。其中tag相关的有两个：conll_tag和pku_tag，conll_tag使用的CoNLL-2000的英文数据，具体数据下载见<a href="http://www.cnts.ua.ac.be/conll2000/chunking/" target="_blank" rel="external">Chunking</a>，pku_tag使用的一个北大同学给的课程作业的中文语料数据。pku_seg和pku_ner同理分别是在相应的数据上进行的分词和命名实体识别。</p>
+</li>
+<li><p>其实，seg和ner的实现依赖于tag的词性标注，只是seg、ner要学习的的标签不同。整个HMM的实现也中规中矩，从语料数据中学习转移概率、发射概率等等，然后利用viterbi算法求解最大路径。其中在计算路径概率的时候，为了防止概率相乘过小约等于零的情况，程序取概率对数再取反，将概率相乘转化为对数相加。</p>
+</li>
+</ul>
+<h1 id="tag"><a href="#tag" class="headerlink" title="tag"></a>tag</h1><ul>
+<li><p>数据说明<br>tag这里指语句的词性标注，当然不同的语料采用的词性体系不太相同。</p>
+<ul>
+<li>conll2000为英文语料，给出的数据一共有三列，每一列代表的含义在上面给出的链接里有提及。第一列是英文单词本身，<strong>第二列</strong>是由Brill tagger标注的词性，<strong>第三列</strong>是华尔街日报语料库产生的标注，其实第三列的标注和分词的标注方法类似。</li>
+<li>pku的数据是中文语料，且已经进行过分词操作，它的词性标注与<a href="http://wenku.baidu.com/view/3c5488b75ef7ba0d4b733b1a" target="_blank" rel="external">近代汉语词类标注简表</a>相似但不完全相同。</li>
+</ul>
+</li>
+<li><p>测试结果<br>关于准确率，程序将数据七三分做交叉验证来计算。conll2000对第二列的<strong>Brill tagger</strong>的准确率约为94.09%，对第三列的<strong>WSJ corpus</strong>的准确率约为87.93%。pku的准确率约为93.0%。</p>
+</li>
+<li><p>结果分析</p>
+<ul>
+<li>本文实现的HMM对实际详细的词性标注如conll的Brill tagger和pku的标注有较好的效果，而conll的WSJ corpus的标注偏向语句的分词，效果会差一些。</li>
+<li>我实现的HMM在训练完进行标注的时候，没有去检测一些数字，日期等等的存在，而是单纯地看它在不在训练集里，比如之前训练时统计到过6.11是数字，但没见过6.12，那之后就标注不出来了。这是很大一块需要改进的地方。</li>
+</ul>
+</li>
+</ul>
+<h1 id="seg"><a href="#seg" class="headerlink" title="seg"></a>seg</h1><ul>
+<li><p>处理思路<br>seg的处理思路就是将训练数据转化为上一项tag（POS Tagging）所需的训练数据格式，程序里我采用的是4-tag（B（Begin，词首）, E（End，词尾）, M（Middle，词中）, S（Single,单字词））标记集。这里转化来转化去的脚本需要自己写。关于这种标记方法和转化过程的详细介绍可以参考这篇<a href="http://www.52nlp.cn/%E4%B8%AD%E6%96%87%E5%88%86%E8%AF%8D%E5%85%A5%E9%97%A8%E4%B9%8B%E5%AD%97%E6%A0%87%E6%B3%A8%E6%B3%953" target="_blank" rel="external">中文分词入门之字标注法3</a>。</p>
+</li>
+<li><p>测试结果<br>对pku的数据测试得到的准确率为92.13%，召回率为91.88%，F1值为92.01%。</p>
+</li>
+</ul>
+<h1 id="ner"><a href="#ner" class="headerlink" title="ner"></a>ner</h1><ul>
+<li><p>数据说明<br>ner的训练数据里，非命名实体的都标注为N，“北京市”中“北”标为“B-LOC”，代表为地名的开始，“京”和“市”跟在后面则标为“I-LOC”。在最后计算准确率和召回率的时候，标为“N”的字都不需要考虑，仅看那些命名实体是否被标注出来。</p>
+</li>
+<li><p>测试结果<br>对pku的数据测试得到的准确率为67.6%，召回率为63.9%，F1值为65.7%。</p>
+</li>
+<li><p>结果分析<br>从结果可以看出，在不使用规则或字典等其他方法干预的情况下，单纯使用HMM对命名实体识别效果较差。</p>
+</li>
+</ul>
+]]></content>
+    </entry>
+    
+    <entry>
       <title><![CDATA[使用python将图片转化为字符画]]></title>
       <url>http://tripleday.github.io/2016/07/20/img2txt/</url>
       <content type="html"><![CDATA[<p>忽然想玩这个图片转化的把戏，是因为之前在知乎上看到一个专栏里用到了下面这个图：<br><img src="/uploads/img/20160720/mo.jpg" alt="拿衣服"><br>当然，那篇专栏没过几小时就被和谐了。我在网上貌似搜到了这个图片转emoji mosaic的网址，供大家戏耍：<a href="http://ericandrewlewis.github.io/emoji-mosaic/" target="_blank" rel="external">Emoji Mosaic</a>。</p>
 <p>做这个转emoji马赛克应该蛮复杂的，当然它的源码也很容易找到：<a href="https://github.com/ericandrewlewis/emoji-mosaic" target="_blank" rel="external">ericandrewlewis/emoji-mosaic</a>。但我纯属娱乐又不想花功夫，于是就在晚上学了学把图片转为字符图的代码玩玩。</p>
 <p>代码很简单：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#-*- coding: utf-8 -*-</span></span><br><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"> </span><br><span class="line">grey2char = [<span class="string">'@'</span>,<span class="string">'#'</span>,<span class="string">'$'</span>,<span class="string">'%'</span>,<span class="string">'&amp;'</span>,<span class="string">'?'</span>,<span class="string">'*'</span>,<span class="string">'o'</span>,<span class="string">'/'</span>,<span class="string">'&#123;'</span>,<span class="string">'['</span>,<span class="string">'('</span>,<span class="string">'|'</span>,<span class="string">'!'</span>,<span class="string">'^'</span>,<span class="string">'~'</span>,<span class="string">'-'</span>,<span class="string">'_'</span>,<span class="string">':'</span>,<span class="string">';'</span>,<span class="string">','</span>,<span class="string">'.'</span>,<span class="string">'`'</span>,<span class="string">' '</span>]</span><br><span class="line">count = len(grey2char)</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">toText</span><span class="params">(image_file)</span>:</span></span><br><span class="line">   image_file = image_file.convert(<span class="string">'L'</span>)<span class="comment"># 转灰度</span></span><br><span class="line">   result = <span class="string">''</span><span class="comment"># 储存字符串</span></span><br><span class="line">   <span class="keyword">for</span> h <span class="keyword">in</span> range(<span class="number">0</span>,  image_file.size[<span class="number">1</span>]):<span class="comment"># height</span></span><br><span class="line">      <span class="keyword">for</span> w <span class="keyword">in</span> range(<span class="number">0</span>, image_file.size[<span class="number">0</span>]):<span class="comment"># width</span></span><br><span class="line">         gray = image_file.getpixel((w,h))</span><br><span class="line">         result += grey2char[int(gray/(<span class="number">255</span>/(count<span class="number">-1</span>)))]</span><br><span class="line">      result += <span class="string">'\r\n'</span></span><br><span class="line">   <span class="keyword">return</span> result</span><br><span class="line"> </span><br><span class="line">image_file = Image.open(<span class="string">"input.jpg"</span>)<span class="comment"># 打开图片</span></span><br><span class="line">image_file = image_file.resize((int(image_file.size[<span class="number">0</span>]), int(image_file.size[<span class="number">1</span>]*<span class="number">0.55</span>)))<span class="comment"># 调整图片大小</span></span><br><span class="line"> </span><br><span class="line">output = open(<span class="string">'output.txt'</span>,<span class="string">'w'</span>)</span><br><span class="line">output.write(toText(image_file))</span><br><span class="line">output.close()</span><br></pre></td></tr></table></figure></p>
-<p>需要注意的是要安装依赖PIL。<br>原图：<br><img src="/uploads/img/20160720/input.jpg" alt=""></p>
+<p>需要注意的是要安装依赖PIL。</p>
+<p>原图：<br><img src="/uploads/img/20160720/input.jpg" alt=""></p>
 <p>字符图：<br><img src="/uploads/img/20160720/cover.png" alt=""></p>
 ]]></content>
     </entry>
     
     <entry>
-      <title><![CDATA[HMM、MEMM和CRF的学习与总结]]></title>
+      <title><![CDATA[HMM、MEMM和CRF的学习总结]]></title>
       <url>http://tripleday.github.io/2016/07/14/hmm-memm-crf/</url>
       <content type="html"><![CDATA[<p>最近一直在学习NLP里最基础的几个语言模型：<strong>隐马尔科夫模型</strong>（Hidden Markov Model，HMM）、<strong>最大熵马尔科夫模型</strong>（Maximum Entropy Markov Model，MEMM）和<strong>条件随机场</strong>（Conditional Random Field，CRF）。这三种模型在自然语言处理中，可以解决分词（segment，Seg）、标注（Tag）和命名实体识别（Named Entity Recognition，Ner）等问题。学习的时候参考最多的两本书是李航老师的<strong>《统计学习方法》</strong>和吴军老师的<strong>《数学之美》</strong>。如需这两本书的电子版可以给我留言。</p>
 <p>我先分别简单介绍一下几种模型，具体的推导过程就不列出来，《统计学习方法》上有非常详细的数学原理。</p>
@@ -112,7 +158,7 @@
 <p>在安装过程中最让人抓狂的SIP和PyQt4的版本对应问题：某个固定版本的SIP只能支持少数几个版本的PyQt，有比较麻烦的兼容性问题。曾经在安装时，要么提示SIP版本过高，PyQt无法编译；要么PyQt版本过高，SIP不能支持。<br>贴一个能够成功安装的博客链接：<a href="http://blog.csdn.net/dgatiger/article/details/50331361" target="_blank" rel="external">CentOS7.1下python2.7.10安装PyQt4</a></p>
 <p>文中SIP的安装代码：<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">wget http://downloads.sourceforge.net/project/pyqt/sip/sip-4.17/sip-4.17.tar.gz</span><br><span class="line">tar xvf sip-4.17.tar.gz</span><br><span class="line"><span class="built_in">cd</span> sip-4.17</span><br><span class="line">python configure.py</span><br><span class="line">make &amp; make install &amp; make clean</span><br></pre></td></tr></table></figure></p>
 <p>PyQt的安装代码：<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">wget http://downloads.sourceforge.net/project/pyqt/PyQt4/PyQt-4.11.4/PyQt-x11-gpl-4.11.4.tar.gz</span><br><span class="line">tar xvf PyQt-x11-gpl-4.11.4.tar.gz</span><br><span class="line"><span class="built_in">cd</span> PyQt-x11-gpl-4.11.4</span><br><span class="line">python configure.py -q  /usr/lib64/qt4/bin/qmake</span><br><span class="line">make &amp; make install &amp; make clean</span><br></pre></td></tr></table></figure></p>
-<p>这篇博客里用的是<strong>sip-4.17</strong>和<strong>PyQt-4.11.4</strong>是能够成功的一对版本。另外，Python2.7最高只能支持到PyQt4，PyQt5好像需要Python3.X的环境；同时Python2与Python3的兼容性也较差。所以为了避免版本上的麻烦，个人建议Python2还是老老实实用PyQt4，Python3的也使用对应的PyQt5。</p>
+<p>这篇博客里用的是<strong>sip-4.17</strong>和<strong>PyQt-4.11.4</strong>是能够成功的一对版本。另外，Python2.7最高只能支持到PyQt4，PyQt5好像需要Python3.X的环境；同时Python2与Python3的兼容性也有些问题。所以为了避免版本上的麻烦，个人建议Python2还是老老实实用PyQt4，Python3的也使用对应的PyQt5。</p>
 ]]></content>
     </entry>
     
@@ -143,6 +189,12 @@
   
     
     <entry>
+      <title><![CDATA[categories]]></title>
+      <url>http://tripleday.github.io/categories/index.html</url>
+      <content type="html"></content>
+    </entry>
+    
+    <entry>
       <title><![CDATA[About]]></title>
       <url>http://tripleday.github.io/about/index.html</url>
       <content type="html"><![CDATA[<h1 id="About-Me"><a href="#About-Me" class="headerlink" title="About Me"></a>About Me</h1><p>My name is Haotian Wu(吴昊天). I’m a master student in <a href="http://cse.seu.edu.cn/en/index.html" target="_blank" rel="external">School of Computer Science &amp; Engineering</a> at <a href="http://www.seu.edu.cn/english/main.htm" target="_blank" rel="external">Southeast University</a> and will graduate in Summer 2018.</p>
@@ -166,12 +218,6 @@
     <entry>
       <title><![CDATA[tags]]></title>
       <url>http://tripleday.github.io/tags/index.html</url>
-      <content type="html"></content>
-    </entry>
-    
-    <entry>
-      <title><![CDATA[categories]]></title>
-      <url>http://tripleday.github.io/categories/index.html</url>
       <content type="html"></content>
     </entry>
     

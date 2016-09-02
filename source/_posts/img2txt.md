@@ -40,6 +40,7 @@ output.write(toText(image_file))
 output.close()
 ```
 需要注意的是要安装依赖PIL。
+
 原图：
 ![](/uploads/img/20160720/input.jpg)
 

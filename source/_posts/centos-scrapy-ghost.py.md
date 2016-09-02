@@ -51,4 +51,4 @@ cd PyQt-x11-gpl-4.11.4
 python configure.py -q  /usr/lib64/qt4/bin/qmake
 make & make install & make clean
 ```
-这篇博客里用的是**sip-4.17**和**PyQt-4.11.4**是能够成功的一对版本。另外，Python2.7最高只能支持到PyQt4，PyQt5好像需要Python3.X的环境；同时Python2与Python3的兼容性也较差。所以为了避免版本上的麻烦，个人建议Python2还是老老实实用PyQt4，Python3的也使用对应的PyQt5。
+这篇博客里用的是**sip-4.17**和**PyQt-4.11.4**是能够成功的一对版本。另外，Python2.7最高只能支持到PyQt4，PyQt5好像需要Python3.X的环境；同时Python2与Python3的兼容性也有些问题。所以为了避免版本上的麻烦，个人建议Python2还是老老实实用PyQt4，Python3的也使用对应的PyQt5。

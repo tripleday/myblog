@@ -1,4 +1,4 @@
-title: HMM、MEMM和CRF的学习与总结
+title: HMM、MEMM和CRF的学习总结
 date: 2016-07-14 16:03:45
 comments: true
 tags: 
