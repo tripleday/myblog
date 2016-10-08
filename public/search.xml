@@ -4,6 +4,74 @@
   
     
     <entry>
+      <title><![CDATA[CentOS下使用Graphite监测Scrapy]]></title>
+      <url>http://tripleday.github.io/2016/10/06/graphite/</url>
+      <content type="html"><![CDATA[<p>一直在做分布式爬虫的项目。项目都是要验收的，给领导验收就需要一些可视化的呈现，因为爬虫本身就算你采用了各种了不得的技术，命令行一启动什么都没有的看，控制台的输出和日志不是程序员估计也不会有什么兴趣。</p>
+<p>受github上一个前人的<a href="https://github.com/gnemoug/distribute_crawler" target="_blank" rel="external">爬虫项目</a>的指导，我学习了里面使用Graphite监控的部分，在这篇博客里把我在安装和使用中遇到的问题全部记录下来。</p>
+<h1 id="Graphite简介"><a href="#Graphite简介" class="headerlink" title="Graphite简介"></a>Graphite简介</h1><p>Graphite是一个Python编写的企业级开源监控工具，采用django框架，用来收集服务器所有的即时状态，用户请求信息，Memcached命中率,RabbitMQ消息服务器的状态，操作系统的负载状态。Graphite服务器大约每分钟需要有4800次的跟新操作，它采用简单的文本协议和绘图功能，可以方便的使用在任何操作系统上。Graphite 自己本身并不收集具体的数据，这些数据收集的具体工作通常由第三方工具或插件完成（如 Ganglia, collectd, statsd, Collectl 等)。</p>
+<p>简单来说，Graphite主要做两件事情：</p>
+<ul>
+<li>实时监控第三方工具传来的数据</li>
+<li>根据数据绘制图形</li>
+</ul>
+<p>Graphite包含3个组件，carbon，whisper，graphite webapp其中：</p>
+<ul>
+<li>carbon    - 用于监控数据的 Twisted 守护进程</li>
+<li>whisper    - 用于存放和操作数据的库</li>
+<li>graphite webapp    - 用于绘制图形的Django webapp</li>
+</ul>
+<p>关于Graphite的详细官方文档可以参考<a href="http://graphite.readthedocs.io/en/latest/" target="_blank" rel="external">Graphite Documentation</a>。</p>
+<h1 id="Graphite安装"><a href="#Graphite安装" class="headerlink" title="Graphite安装"></a>Graphite安装</h1><p>Graphite的安装，我更多地参考了这一篇博客<a href="https://my.oschina.net/duoduo3369/blog/338142#OSC_h2_4" target="_blank" rel="external">用graphite diamond做监控</a>。</p>
+<p>首先，我的安装环境是CentOS 6.6，Python2.7.10。</p>
+<p>在python等开发环境都安装OK之后，我们使用pip安装Graphite的三个组件：<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">pip install whisper</span><br><span class="line">pip install carbon</span><br><span class="line">pip install graphite-web</span><br></pre></td></tr></table></figure></p>
+<p>这样的方法会将它们安装在默认路径/opt/graphite下。安装完成后，你会发现/opt/graphite下多了一堆东西，将/opt/graphite/conf下的*.example,拷贝到去掉example即可。</p>
+<p>启动carbon，carbon会在默认的2003端口接收数据。<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python /opt/graphite/bin/carbon-cache.py start</span><br></pre></td></tr></table></figure></p>
+<p>启动django，即整个Graphite的web应用。<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python /opt/graphite/webapp/graphite/manage.py runserver 0.0.0.0:12222</span><br></pre></td></tr></table></figure></p>
+<p>其中的12222号端口可以自己任意修改。<br>这样浏览器打开<code>http://127.0.0.1:12222</code>就可以看到Graphite的界面。 </p>
+<p><strong>然而启动django这一步我在运行的时候遇到了各种错误。</strong></p>
+<ul>
+<li>在我<code>pip install</code>的django最新版本为2.0的时候，我遇到了大量有关pattern的错误，我按照网上说的全部更改之后还是无法运行，所以弃掉2.0。</li>
+<li><p>然而我<code>pip install django==1.9</code>之后，还是遇到了</p>
+<ul>
+<li>no such table: auth_user</li>
+<li>no such table: account_profile</li>
+<li>Unknown command: ‘syncdb’</li>
+</ul>
+<p>这三种错误，发生的先后顺序不一定准，但我在疯狂查阅各种资料之后还是没有成功解决。</p>
+</li>
+<li>这些错误都是因为django版本不兼容导致的，在我<code>pip install django==1.8</code>之后，整个世界就清静了。</li>
+</ul>
+<p>如果这时候以为打开浏览器就能看到界面的话，那你还是太年轻了。命令行能够运行没错，但是web可视化的界面还是有错！<br>Graphite界面会提示<code>import cairo</code>出错，这个cairo也是个大坑，原因就是你没有安装cairo图形库，<code>pip install cairo</code>之后你终于能松一口气欣赏一下Graphite了。</p>
+<p>页面右上角的dashboard页面可以玩一下，有很多高阶的功能，你会看到左侧tree那边有一些数据，这些数据存储在<code>/opt/graphite/storage/whisper</code>。</p>
+<p>另外，Graphite有个<strong>时区设置</strong>的问题，如果不更改，你的时间显示都是GMT时间。只需将<code>/opt/graphite/webapp/graphite/local_settings.py</code>文件里的TIME_ZONE配置改成如下：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Set your local timezone (Django's default is America/Chicago)</span></span><br><span class="line"><span class="comment"># If your graphs appear to be offset by a couple hours then this probably</span></span><br><span class="line"><span class="comment"># needs to be explicitly set to your local timezone.</span></span><br><span class="line">TIME_ZONE = <span class="string">'Asia/Shanghai'</span></span><br></pre></td></tr></table></figure></p>
+<p>如果之后想对Graphite的详细架构和具体配置有更深入的了解的话，推荐两个链接：</p>
+<ul>
+<li><a href="https://github.com/springside/springside4/wiki/Graphite" target="_blank" rel="external">Graphite</a></li>
+<li><a href="http://m.linuxeden.com/wap.php?action=article&amp;id=159746" target="_blank" rel="external">Graphite监控新手入门 </a></li>
+</ul>
+<h1 id="Graphite与Scrapy的结合"><a href="#Graphite与Scrapy的结合" class="headerlink" title="Graphite与Scrapy的结合"></a>Graphite与Scrapy的结合</h1><p>结合的方法详见原作者项目中<a href="https://github.com/gnemoug/distribute_crawler/blob/master/woaidu_crawler/woaidu_crawler/statscol/graphite.py" target="_blank" rel="external">graphite.py</a>文件中的注释，我总结为一下几点：</p>
+<ul>
+<li>把<code>/opt/graphite/webapp/content/js/composer_widgets.js</code>文件中<code>toggleAutoRefresh</code>函数里的interval变量从60改为1。</li>
+<li><p>在配置文件<code>storage-aggregation.conf</code>里添加</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[scrapy_min]</span><br><span class="line">pattern = ^scrapy\..*_min$</span><br><span class="line">xFilesFactor = 0.1</span><br><span class="line">aggregationMethod = min</span><br><span class="line">[scrapy_max]</span><br><span class="line">pattern = ^scrapy\..*_max$</span><br><span class="line">xFilesFactor = 0.1</span><br><span class="line">aggregationMethod = max</span><br><span class="line">[scrapy_sum]</span><br><span class="line">pattern = ^scrapy\..*_count$</span><br><span class="line">xFilesFactor = 0.1</span><br><span class="line">aggregationMethod = sum</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在爬虫的配置文件<code>setting.py</code>里添加</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">STATS_CLASS = <span class="string">'scrapygraphite.GraphiteStatsCollector'</span></span><br><span class="line">GRAPHITE_HOST = <span class="string">'127.0.0.1'</span></span><br><span class="line">GRAPHITE_PORT = <span class="number">2003</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>后两点是我自己的修改。<br>Scrapy本身提供的状态记录偏少，且缺乏实时的速度信息，都是不断增长式的总和记录。我想让Scrapy能够定时发送pages的抓取速度和item的生成速度给Graphite，所以我在Scrapy源码的<code>scrapy/extensions/logstats.py</code>文件中添加了两个状态变量的发送。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">spider_opened</span><span class="params">(self, spider)</span>:</span></span><br><span class="line">    self.pagesprev = <span class="number">0</span></span><br><span class="line">    self.itemsprev = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    self.task = task.LoopingCall(self.log, spider)</span><br><span class="line">    self.task.start(self.interval)</span><br><span class="line"></span><br><span class="line">    self.stats.set_value(<span class="string">'pages_min'</span>, <span class="number">0</span>, spider=spider)</span><br><span class="line">    self.stats.set_value(<span class="string">'items_min'</span>, <span class="number">0</span>, spider=spider)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">log</span><span class="params">(self, spider)</span>:</span></span><br><span class="line">    items = self.stats.get_value(<span class="string">'item_scraped_count'</span>, <span class="number">0</span>)</span><br><span class="line">    pages = self.stats.get_value(<span class="string">'response_received_count'</span>, <span class="number">0</span>)</span><br><span class="line">    irate = (items - self.itemsprev) * self.multiplier</span><br><span class="line">    prate = (pages - self.pagesprev) * self.multiplier</span><br><span class="line">    self.pagesprev, self.itemsprev = pages, items</span><br><span class="line"></span><br><span class="line">    msg = (<span class="string">"Crawled %(pages)d pages (at %(pagerate)d pages/min), "</span></span><br><span class="line">           <span class="string">"scraped %(items)d items (at %(itemrate)d items/min)"</span>)</span><br><span class="line">    log_args = &#123;<span class="string">'pages'</span>: pages, <span class="string">'pagerate'</span>: prate,</span><br><span class="line">                <span class="string">'items'</span>: items, <span class="string">'itemrate'</span>: irate&#125;</span><br><span class="line">    logger.info(msg, log_args, extra=&#123;<span class="string">'spider'</span>: spider&#125;)</span><br><span class="line">    self.stats.set_value(<span class="string">'pages_min'</span>, prate, spider=spider)</span><br><span class="line">    self.stats.set_value(<span class="string">'items_min'</span>, irate, spider=spider)</span><br><span class="line">    states = self.stats.get_stats()</span><br><span class="line">    <span class="keyword">for</span> key <span class="keyword">in</span> states:</span><br><span class="line">        self.stats._set_value(key, states[key], spider=spider)</span><br></pre></td></tr></table></figure>
+<p>这里的log函数每隔interval的秒数就会执行一次，interval的值可以在setting里配置<code>LOGSTATS_INTERVAL</code>的值。因为Scrapy里的状态值很多是在增长时才会调用inc_value去加一改变大小，数据不增长就不会变，也不会去发送给Graphite。所以我在定时执行的log函数里强行再去发送一下数据，不管值有没有改变，即最后的三行代码。虽然我感觉在Graphite的显示里这样做好像并没有什么效果。</p>
+</li>
+<li><p>在数据的分布定义storage-schemas.conf中，默认是按60秒一个数据的方式，存一天的数据，一天前的数据就没了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[default_1min_for_1day]</span><br><span class="line">pattern = .*</span><br><span class="line">retentions = 60s:1d</span><br></pre></td></tr></table></figure>
+<p>但是爬虫的数据60s存一个数据显得有点稀疏，特别是在想要显示实时抓取速度时候，这里可以根据不同需求进行更改。</p>
+</li>
+</ul>
+<h1 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h1><p>贴一个Graphite的效果图：<br><img src="/uploads/img/20161006/graphite.png" alt="Graphite"><br>如果嫌原版Graphite界面丑，据说可以使用豆瓣写的皮肤<a href="https://github.com/douban/graph-index" target="_blank" rel="external">graph-index</a>。</p>
+]]></content>
+    </entry>
+    
+    <entry>
       <title><![CDATA[NLP中使用HMM进行tag、seg和ner]]></title>
       <url>http://tripleday.github.io/2016/07/28/hmm4nlp/</url>
       <content type="html"><![CDATA[<p>看到网上有很多分词、词性标注的工具，但大多是已经训练过的模型，有些可以添加一些自定义的词典来定制模型。趁同学给了我一些nlp的中文语料数据，我就尝试自己实现一个简单的HMM（隐马尔科夫模型）来进行中文的词性标注（Part-of-Speech tagging或POS tagging，以下简称<strong>tag</strong>）、分词（Segmentation，以下简称<strong>seg</strong>）和命名实体识别（Named Entity Recognition，以下简称<strong>ner</strong>）。</p>
@@ -189,12 +257,6 @@
   
     
     <entry>
-      <title><![CDATA[categories]]></title>
-      <url>http://tripleday.github.io/categories/index.html</url>
-      <content type="html"></content>
-    </entry>
-    
-    <entry>
       <title><![CDATA[About]]></title>
       <url>http://tripleday.github.io/about/index.html</url>
       <content type="html"><![CDATA[<h1 id="About-Me"><a href="#About-Me" class="headerlink" title="About Me"></a>About Me</h1><p>My name is Haotian Wu(吴昊天). I’m a master student in <a href="http://cse.seu.edu.cn/en/index.html" target="_blank" rel="external">School of Computer Science &amp; Engineering</a> at <a href="http://www.seu.edu.cn/english/main.htm" target="_blank" rel="external">Southeast University</a> and will graduate in Summer 2018.</p>
@@ -213,6 +275,12 @@
 </ul>
 <h1 id="Contact"><a href="#Contact" class="headerlink" title="Contact"></a>Contact</h1><p>Just to avoid spams, here is the Base64 code of my e-mail address:<br><code>aGFvdGlhbnd1c2V1QGdtYWlsLmNvbQ==</code></p>
 ]]></content>
+    </entry>
+    
+    <entry>
+      <title><![CDATA[categories]]></title>
+      <url>http://tripleday.github.io/categories/index.html</url>
+      <content type="html"></content>
     </entry>
     
     <entry>

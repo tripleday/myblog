@@ -3,7 +3,7 @@ date: 2016-07-28 21:54:17
 comments: true
 tags: 
  - HMM
- - Python
+ - python
 categories: NLP
 photos: 
  - /uploads/img/20160728/cover.png
