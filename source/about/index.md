@@ -20,3 +20,7 @@ My name is Haotian Wu(吴昊天). I'm a master student in [School of Computer Sc
 # Contact
 Just to avoid spams, here is the Base64 code of my e-mail address: 
 `aGFvdGlhbnd1c2V1QGdtYWlsLmNvbQ==`
+
+# Links
+[1024ss.com](http://1024ss.com): 1024 Search Engine
+[Heiming's Blog](http://heimingx.cn): Haiming Xu（胥海明）'s blog

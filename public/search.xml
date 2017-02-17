@@ -257,6 +257,12 @@
   
     
     <entry>
+      <title><![CDATA[tags]]></title>
+      <url>http://tripleday.github.io/tags/index.html</url>
+      <content type="html"></content>
+    </entry>
+    
+    <entry>
       <title><![CDATA[About]]></title>
       <url>http://tripleday.github.io/about/index.html</url>
       <content type="html"><![CDATA[<h1 id="About-Me"><a href="#About-Me" class="headerlink" title="About Me"></a>About Me</h1><p>My name is Haotian Wu(吴昊天). I’m a master student in <a href="http://cse.seu.edu.cn/en/index.html" target="_blank" rel="external">School of Computer Science &amp; Engineering</a> at <a href="http://www.seu.edu.cn/english/main.htm" target="_blank" rel="external">Southeast University</a> and will graduate in Summer 2018.</p>
@@ -274,18 +280,13 @@
 </li>
 </ul>
 <h1 id="Contact"><a href="#Contact" class="headerlink" title="Contact"></a>Contact</h1><p>Just to avoid spams, here is the Base64 code of my e-mail address:<br><code>aGFvdGlhbnd1c2V1QGdtYWlsLmNvbQ==</code></p>
+<h1 id="Links"><a href="#Links" class="headerlink" title="Links"></a>Links</h1><p><a href="http://1024ss.com/" target="_blank" rel="external">1024ss.com</a>: 1024 Search Engine</p>
 ]]></content>
     </entry>
     
     <entry>
       <title><![CDATA[categories]]></title>
       <url>http://tripleday.github.io/categories/index.html</url>
-      <content type="html"></content>
-    </entry>
-    
-    <entry>
-      <title><![CDATA[tags]]></title>
-      <url>http://tripleday.github.io/tags/index.html</url>
       <content type="html"></content>
     </entry>
     
