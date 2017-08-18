@@ -8,18 +8,21 @@ photos:
 ---
 
 # About Me
-My name is Haotian Wu(吴昊天). I'm a master student in [School of Computer Science & Engineering](http://cse.seu.edu.cn/en/index.html) at [Southeast University](http://www.seu.edu.cn/english/main.htm) and will graduate in Summer 2018.
+My name is Haotian Wu(吴昊天). I'm a postgraduate student in [School of Computer Science & Engineering](http://cse.seu.edu.cn/en/index.html) at [Southeast University](http://www.seu.edu.cn/english/main.htm) and will graduate in Summer 2018.
 * Research Interests:
-  * Web Crawler
+  * Wireless and Mobile Networks
+  * Network Economics
+  * Web Information Retrieval
   * Data Mining & Visualization
-  * Ad Hoc Networks
 * Sports: 
   * Badminton
   * Swimming
 
-# Contact
-Just to avoid spams, here is the Base64 code of my e-mail address: 
-`aGFvdGlhbnd1c2V1QGdtYWlsLmNvbQ==`
+# Contacts
+E-mail address: haotianwuseu # gmail # com.
+
+Just to avoid spams, here is the Base64 code of my QQ number: 
+`MTc3MjQ4MzM0Mg==`
 
 # Links
 [1024ss.com](http://1024ss.com): 1024 Search Engine

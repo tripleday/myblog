@@ -1,9 +1,9 @@
-title: CentOS下使用Graphite监测Scrapy
+title: CentOS下使用Graphite监测scrapy
 date: 2016-10-06 21:43:19
 comments: true
 tags: 
  - Graphite
- - Scrapy
+ - scrapy
  - CentOS
  - python
 categories: Crawler
@@ -78,7 +78,7 @@ TIME_ZONE = 'Asia/Shanghai'
 - [Graphite](https://github.com/springside/springside4/wiki/Graphite)
 - [Graphite监控新手入门 ](http://m.linuxeden.com/wap.php?action=article&id=159746)
 
-# Graphite与Scrapy的结合
+# Graphite与scrapy的结合
 结合的方法详见原作者项目中[graphite.py](https://github.com/gnemoug/distribute_crawler/blob/master/woaidu_crawler/woaidu_crawler/statscol/graphite.py)文件中的注释，我总结为一下几点：
 - 把`/opt/graphite/webapp/content/js/composer_widgets.js`文件中`toggleAutoRefresh`函数里的interval变量从60改为1。
 - 在配置文件`storage-aggregation.conf`里添加
@@ -103,7 +103,7 @@ GRAPHITE_HOST = '127.0.0.1'
 GRAPHITE_PORT = 2003
 ```
 - 后两点是我自己的修改。
-Scrapy本身提供的状态记录偏少，且缺乏实时的速度信息，都是不断增长式的总和记录。我想让Scrapy能够定时发送pages的抓取速度和item的生成速度给Graphite，所以我在Scrapy源码的`scrapy/extensions/logstats.py`文件中添加了两个状态变量的发送。
+scrapy本身提供的状态记录偏少，且缺乏实时的速度信息，都是不断增长式的总和记录。我想让scrapy能够定时发送pages的抓取速度和item的生成速度给Graphite，所以我在scrapy源码的`scrapy/extensions/logstats.py`文件中添加了两个状态变量的发送。
 ```python
 def spider_opened(self, spider):
     self.pagesprev = 0
@@ -133,7 +133,7 @@ def log(self, spider):
     for key in states:
         self.stats._set_value(key, states[key], spider=spider) 
 ```
-  这里的log函数每隔interval的秒数就会执行一次，interval的值可以在setting里配置`LOGSTATS_INTERVAL`的值。因为Scrapy里的状态值很多是在增长时才会调用inc_value去加一改变大小，数据不增长就不会变，也不会去发送给Graphite。所以我在定时执行的log函数里强行再去发送一下数据，不管值有没有改变，即最后的三行代码。虽然我感觉在Graphite的显示里这样做好像并没有什么效果。
+  这里的log函数每隔interval的秒数就会执行一次，interval的值可以在setting里配置`LOGSTATS_INTERVAL`的值。因为scrapy里的状态值很多是在增长时才会调用inc_value去加一改变大小，数据不增长就不会变，也不会去发送给Graphite。所以我在定时执行的log函数里强行再去发送一下数据，不管值有没有改变，即最后的三行代码。虽然我感觉在Graphite的显示里这样做好像并没有什么效果。
 - 在数据的分布定义storage-schemas.conf中，默认是按60秒一个数据的方式，存一天的数据，一天前的数据就没了。
 ```
 [default_1min_for_1day]

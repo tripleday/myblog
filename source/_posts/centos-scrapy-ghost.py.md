@@ -3,12 +3,12 @@ date: 2016-06-16 13:34:08
 comments: true
 tags: 
  - CentOS
- - Scrapy
+ - scrapy
  - ghost.py
  - python
-categories: Reviews
+categories: Crawler
 ---
-之前一直在做Scrapy中关于网页动态内容的获取，主要目标是想获得javascript渲染后的网页html源码。
+之前一直在做scrapy中关于网页动态内容的获取，主要目标是想获得javascript渲染后的网页html源码。
 在转向使用ghost.py来做脚本解析之前的挖坑爬坑过程中，我已经造访过我所知的大大小小各种论坛、博客以及贴吧和知乎。其中有大方向上指导意义的有知乎里的相关问题：
 * [Python 爬虫如何获取 JS 生成的 URL 和网页内容？](https://www.zhihu.com/question/21471960)
 * [Python爬虫在处理由Javascript动态生成的页面时有哪些解决方案？](https://www.zhihu.com/question/36450326)
@@ -23,7 +23,7 @@ ghost.py算是我掉坑里时间最长的，也是差点就成功的一个，到
 
 # PySide
 当然挖坑的第一步就是安装环境了，win7上安装简便得多，但到linux下就没那么舒服了。
-下面是我在CentOS 6.5和python2.7.11的环境上安装Scrapy、PySide和Ghost.py过程中查到的有用资料的整合。如嫌下面的字太小，可戳此PDF[源地址](http://tripleday.github.io/uploads/pdf/CentOS-scrapy-ghost.py.pdf)。
+下面是我在CentOS 6.5和python2.7.11的环境上安装scrapy、PySide和Ghost.py过程中查到的有用资料的整合。如嫌下面的字太小，可戳此PDF[源地址](http://tripleday.cn/uploads/pdf/CentOS-scrapy-ghost.py.pdf)。
 {% pdf http://tripleday.github.io/uploads/pdf/CentOS-scrapy-ghost.py.pdf %}
 上面的PDF里ghost.py用的是PySide。PySide和PyQt4的功能和API近乎一致，我的理解是：PyQt4是PySide的商业化版本，两者都是Qt进行维护。
 

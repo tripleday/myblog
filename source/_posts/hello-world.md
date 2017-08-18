@@ -38,7 +38,7 @@ $$
 $$
 
 # PDF Test:
-{% pdf http://tripleday.github.io/uploads/pdf/Clean%20Code.pdf %}
+{% pdf http://tripleday.cn/uploads/pdf/Clean%20Code.pdf %}
 
 # iFrame Test:
 {% iframe http://www.seu.edu.cn/english/main.htm 100% 500 %}
