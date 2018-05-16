@@ -8,12 +8,10 @@ tags:
  - python
 categories: Crawler
 ---
-一直在做分布式爬虫的项目。项目都是要验收的，给领导验收就需要一些可视化的呈现，因为爬虫本身就算你采用了各种了不得的技术，命令行一启动什么都没有的看，控制台的输出和日志不是程序员估计也不会有什么兴趣。
-
 受github上一个前人的[爬虫项目](https://github.com/gnemoug/distribute_crawler)的指导，我学习了里面使用Graphite监控的部分，在这篇博客里把我在安装和使用中遇到的问题全部记录下来。
 
 # Graphite简介
-Graphite是一个Python编写的企业级开源监控工具，采用django框架，用来收集服务器所有的即时状态，用户请求信息，Memcached命中率,RabbitMQ消息服务器的状态，操作系统的负载状态。Graphite服务器大约每分钟需要有4800次的跟新操作，它采用简单的文本协议和绘图功能，可以方便的使用在任何操作系统上。Graphite 自己本身并不收集具体的数据，这些数据收集的具体工作通常由第三方工具或插件完成（如 Ganglia, collectd, statsd, Collectl 等)。
+Graphite是一个Python编写的企业级开源监控工具，采用django框架，用来收集服务器所有的即时状态，用户请求信息，Memcached命中率，RabbitMQ消息服务器的状态，操作系统的负载状态。Graphite服务器大约每分钟需要有4800次的跟新操作，它采用简单的文本协议和绘图功能，可以方便的使用在任何操作系统上。Graphite自己本身并不收集具体的数据，这些数据收集的具体工作通常由第三方工具或插件完成（如 Ganglia, collectd, statsd, Collectl 等)。
 
 简单来说，Graphite主要做两件事情：
 - 实时监控第三方工具传来的数据

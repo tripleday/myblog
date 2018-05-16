@@ -8,12 +8,11 @@ photos:
 ---
 
 # About Me
-My name is Haotian Wu(吴昊天). I'm a postgraduate student in [School of Computer Science & Engineering](http://cse.seu.edu.cn/en/index.html) at [Southeast University](http://www.seu.edu.cn/english/main.htm) and will graduate in Summer 2018.
+My name is Haotian WU. I'm a postgraduate student in [School of Computer Science & Engineering](http://cse.seu.edu.cn/en/index.html) at [Southeast University](http://www.seu.edu.cn/english/main.htm) and will graduate in Summer 2018.
 * Research Interests:
-  * Wireless and Mobile Networks
-  * Network Economics
+  * Blockchain
+  * Opportunistic Networks
   * Web Information Retrieval
-  * Data Mining & Visualization
 * Sports: 
   * Badminton
   * Swimming
@@ -21,9 +20,9 @@ My name is Haotian Wu(吴昊天). I'm a postgraduate student in [School of Compu
 # Contacts
 E-mail address: haotianwuseu # gmail # com.
 
-Just to avoid spams, here is the Base64 code of my QQ number: 
+The Base64 code of my QQ number is: 
 `MTc3MjQ4MzM0Mg==`
 
 # Links
 [1024ss.com](http://1024ss.com): 1024 Search Engine
-[Heiming's Blog](http://heimingx.cn): Haiming Xu（胥海明）'s blog
+[Heiming's Blog](http://heimingx.cn): Haiming Xu's blog
